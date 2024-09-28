@@ -1,0 +1,21 @@
+{
+  "name": "rollingpaws-back",
+  "version": "1.0.0",
+  "description": "Proyecto Final para RollingCode Academy - Clínica veterinaria",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --watch --env-file=.env index.js"
+  },
+  "keywords": [
+    "veterinary",
+    "express",
+    "mongoDB",
+    "nextJS"
+  ],
+  "author": "Fernando F. Salomón",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.0"
+  }
+}
