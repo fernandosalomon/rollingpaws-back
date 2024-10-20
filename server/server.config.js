@@ -14,7 +14,10 @@ class Server {
     this.app.use(cors());
   }
 
-  routes() {}
+  routes() {
+    this.app.use("/api/user", require("../routes/user.routes"));
+    this.app.use("/api/pet", require("../routes/pet.routes"));
+  }
 
   listen() {
     this.app.listen(process.env.PORT, () => {
