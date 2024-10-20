@@ -2,12 +2,12 @@ const UserModel = require("../models/user.model");
 const bcrypt = require(`bcrypt`);
 
 const getAllUsersService = async () => {
-  const users = await UserModel.find();
+  const users = await UserModel.find().populate("pets");
   return users;
 };
 
 const getUserByIdService = async (userID) => {
-  const user = await UserModel.findById(userID);
+  const user = await UserModel.findById(userID).populate("pets");
   if (!user) {
     return {
       message: "Usuario no encotrado",

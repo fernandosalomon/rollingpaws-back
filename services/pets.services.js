@@ -1,13 +1,14 @@
 const PetModel = require("../models/pet.model");
+const UserModel = require("../models/user.model");
 
 const getAllPetsService = async () => {
-  const pets = await PetModel.find();
+  const pets = await PetModel.find().populate("owner");
   return pets;
 };
 
 const getPetByIdService = async (petID) => {
   try {
-    const pet = await PetModel.findById(petID);
+    const pet = await PetModel.findById(petID).populate("owners");
     return {
       petData: pet,
       statusCode: 200,
@@ -22,8 +23,17 @@ const getPetByIdService = async (petID) => {
 };
 
 const createNewPetService = async (body) => {
-  const { name, species, breed, sex, color, height, weight, observations } =
-    body;
+  const {
+    name,
+    species,
+    breed,
+    sex,
+    color,
+    height,
+    weight,
+    observations,
+    owner,
+  } = body;
 
   if (!name || !species) {
     return {
@@ -36,13 +46,23 @@ const createNewPetService = async (body) => {
       species,
       breed,
       sex,
+      color,
       weight,
       height,
       observations,
+      owner,
     });
 
     try {
       const createdPet = await newPet.save();
+
+      const ownerData = await UserModel.findById(owner);
+      ownerData.pets.push(createdPet._id);
+      const updatedPetsUser = await UserModel.findByIdAndUpdate(
+        owner,
+        ownerData,
+        { new: true }
+      );
       return {
         petData: createdPet,
         statusCode: 201,

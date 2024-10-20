@@ -57,6 +57,12 @@ const petSchema = new Schema(
         "El texto no tiene el formáto correcto (Solo letras, numeros y caracteres especiales: /$-_,.())",
       ],
     },
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      unique: true,
+    },
   },
   { timestamps: true }
 );

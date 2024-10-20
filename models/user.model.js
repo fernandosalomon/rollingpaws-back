@@ -40,6 +40,12 @@ const userSchema = new Schema(
       minLength: 2,
       maxLength: 40,
     },
+    pets: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Pet",
+      },
+    ],
   },
   { timestamps: true }
 );
