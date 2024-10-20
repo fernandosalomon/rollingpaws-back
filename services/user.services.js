@@ -5,6 +5,17 @@ const getAllUsersService = async () => {
   return users;
 };
 
+const createNewUserService = async (body) => {
+  const { name } = body;
+  const newUser = new UserModel({ name });
+  const registerUser = await newUser.save();
+  return {
+    registerUser,
+    statusCode: 201,
+  };
+};
+
 module.exports = {
   getAllUsersService,
+  createNewUserService,
 };
