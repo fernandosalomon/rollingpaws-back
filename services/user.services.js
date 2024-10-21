@@ -47,39 +47,48 @@ const createNewUserService = async (body) => {
       statusCode: 400,
     };
   } else {
-    if (
-      /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&áéíóúÁÉÍÓÚñÑ]).{8,}$/.test(
-        password
-      )
-    ) {
-      const newUser = new UserModel({
-        fullname,
-        email,
-        password,
-        phone,
-        address,
-      });
-      const salt = bcrypt.genSaltSync(10);
+    const userExists = await UserModel.findOne({ email: email });
+    console.log(userExists);
+    if (!userExists) {
+      if (
+        /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&áéíóúÁÉÍÓÚñÑ]).{8,}$/.test(
+          password
+        )
+      ) {
+        const newUser = new UserModel({
+          fullname,
+          email,
+          password,
+          phone,
+          address,
+        });
+        const salt = bcrypt.genSaltSync(10);
 
-      newUser.password = bcrypt.hashSync(newUser.password, salt);
+        newUser.password = bcrypt.hashSync(newUser.password, salt);
 
-      try {
-        const registeredUser = await newUser.save();
+        try {
+          const registeredUser = await newUser.save();
+          return {
+            data: registeredUser,
+            statusCode: 201,
+          };
+        } catch (error) {
+          console.log(error);
+          return {
+            message: "El nuevo usuario no pudo guardarse en la base de datos.",
+            statusCode: 500,
+          };
+        }
+      } else {
         return {
-          data: registeredUser,
-          statusCode: 201,
-        };
-      } catch (error) {
-        console.log(error);
-        return {
-          message: "El nuevo usuario no pudo guardarse en la base de datos.",
-          statusCode: 500,
+          message:
+            "La contraseña debe contener al menos 8 caracteres, una letra mayuscula, una minuscula, un número y un caracter especial (@$!%*?&)",
+          statusCode: 400,
         };
       }
     } else {
       return {
-        message:
-          "La contraseña debe contener al menos 8 caracteres, una letra mayuscula, una minuscula, un número y un caracter especial (@$!%*?&)",
+        message: "El email corresponde con un usuario registrado.",
         statusCode: 400,
       };
     }
