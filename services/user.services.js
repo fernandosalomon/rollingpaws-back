@@ -2,19 +2,39 @@ const UserModel = require("../models/user.model");
 const bcrypt = require(`bcrypt`);
 
 const getAllUsersService = async () => {
-  const users = await UserModel.find().populate("pets");
-  return users;
+  try {
+    const users = await UserModel.find().populate("pets");
+    return {
+      data: users,
+      statusCode: 200,
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      message: `No pudimos conectar con la base de datos.`,
+      statusCode: 500,
+    };
+  }
 };
 
 const getUserByIdService = async (userID) => {
-  const user = await UserModel.findById(userID).populate("pets");
-  if (!user) {
+  try {
+    const user = await UserModel.findById(userID).populate("pets");
+
+    if (!user) {
+      return {
+        message: "El ID no corresponde con un usuario registrado.",
+        statusCode: 400,
+      };
+    } else {
+      return { data: user, statusCode: 200 };
+    }
+  } catch (error) {
+    console.log(error);
     return {
-      message: "Usuario no encotrado",
-      statusCode: 200,
+      message: `No pudimos conectar con la base de datos.`,
+      statusCode: 500,
     };
-  } else {
-    return { userData: user, statusCode: 200 };
   }
 };
 
@@ -27,23 +47,42 @@ const createNewUserService = async (body) => {
       statusCode: 400,
     };
   } else {
-    const newUser = new UserModel({
-      fullname,
-      email,
-      password,
-      phone,
-      address,
-    });
+    if (
+      /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&áéíóúÁÉÍÓÚñÑ]).{8,}$/.test(
+        password
+      )
+    ) {
+      const newUser = new UserModel({
+        fullname,
+        email,
+        password,
+        phone,
+        address,
+      });
+      const salt = bcrypt.genSaltSync(10);
 
-    const salt = bcrypt.genSaltSync(10);
+      newUser.password = bcrypt.hashSync(newUser.password, salt);
 
-    newUser.password = bcrypt.hashSync(newUser.password, salt);
-
-    const registerUser = await newUser.save();
-    return {
-      registerUser,
-      statusCode: 201,
-    };
+      try {
+        const registeredUser = await newUser.save();
+        return {
+          data: registeredUser,
+          statusCode: 201,
+        };
+      } catch (error) {
+        console.log(error);
+        return {
+          message: "El nuevo usuario no pudo guardarse en la base de datos.",
+          statusCode: 500,
+        };
+      }
+    } else {
+      return {
+        message:
+          "La contraseña debe contener al menos 8 caracteres, una letra mayuscula, una minuscula, un número y un caracter especial (@$!%*?&)",
+        statusCode: 400,
+      };
+    }
   }
 };
 
@@ -55,26 +94,27 @@ const updateUserService = async (userID, body) => {
       return {
         message: "El ID no corresponde con ningún usuario registrado",
         statusCode: 400,
-      }; // Esto se puede hacer con getUserByIdService()
+      };
     } else {
-      const updateUser = await UserModel.findByIdAndUpdate(userID, body, {
+      const updatedUser = await UserModel.findByIdAndUpdate(userID, body, {
         new: true,
       });
-      const errors = updateUser.validateSync();
+      const errors = updatedUser.validateSync();
 
       if (errors) {
         return {
-          message: `Error al actualizar información del usuario. Uno o más campos contienen un formato incorrecto`,
+          message:
+            "Error al actualizar información del usuario. Uno o más de los campos proporcionados tienen errores",
           statusCode: 400,
         };
       } else {
-        return { userData: updateUser, statusCode: 200 };
+        return { data: updatedUser, statusCode: 200 };
       }
     }
   } catch (error) {
     console.log(error);
     return {
-      message: `Ocurrio un error tratando de actualizar los datos del usuario. Error: ${error}`,
+      message: `Ocurrio un error tratando de actualizar los datos del usuario.`,
       statusCode: 500,
     };
   }
@@ -84,13 +124,13 @@ const deleteUserByIdService = async (userID) => {
   try {
     const deletedUser = await UserModel.findByIdAndDelete(userID);
     return {
-      userData: deletedUser,
+      data: deletedUser,
       statusCode: 200,
     };
   } catch (error) {
     console.log(error);
     return {
-      message: `Ocurrio un error tratando de eliminar el usuario. Error: ${error}`,
+      message: `Ocurrio un error tratando de eliminar el usuario.`,
       statusCode: 500,
     };
   }
