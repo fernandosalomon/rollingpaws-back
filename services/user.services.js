@@ -105,6 +105,78 @@ const createNewUserService = async (body) => {
   }
 };
 
+const loginUserService = async (body) => {
+  try {
+    const userExist = await UserModel.findOne({ email: body.email });
+    if (userExist) {
+      if (bcrypt.compareSync(body.password, userExist.password)) {
+        if (!userExist.logged) {
+          const payload = {
+            id: userExist._id,
+            role: userExist.role,
+          };
+
+          const token = jwt.sign(payload, process.env.JWT_SECRET);
+
+          const isLogged = await UserModel.findOneAndUpdate(
+            { _id: userExist._id },
+            { logged: true },
+            { new: true }
+          );
+
+          console.log(isLogged);
+
+          return {
+            role: userExist.role,
+            token: token,
+            statusCode: 200,
+          };
+        } else {
+          return {
+            message: "El usuario ya se encuentra identificado en otra sesión",
+            statusCode: 400,
+          };
+        }
+      } else {
+        return {
+          message: "Usuario y/o contraseña incorrectos. P",
+          statusCode: 400,
+        };
+      }
+    } else {
+      return {
+        message: "Usuario y/o contraseña incorrectos. U",
+        statusCode: 400,
+      };
+    }
+  } catch (error) {
+    console.log(error);
+    return {
+      message: "No se pudo conectar con la base de datos",
+      statusCode: 500,
+    };
+  }
+};
+
+const logoutUserService = async (userID) => {
+  try {
+    const logout = await UserModel.findOneAndUpdate(
+      { _id: userID },
+      { logged: false },
+      { new: true }
+    );
+    return {
+      message: "La sesión se cerró con exito",
+      statusCode: 200,
+    };
+  } catch (error) {
+    return {
+      message: "Hubo un error al tratar de cerrar sesión",
+      statusCode: 500,
+    };
+  }
+};
+
 const updateUserService = async (userID, body) => {
   try {
     const userExist = await UserModel.findById(userID);
@@ -159,6 +231,8 @@ module.exports = {
   getAllUsersService,
   getUserByIdService,
   createNewUserService,
+  loginUserService,
+  logoutUserService,
   updateUserService,
   deleteUserByIdService,
 };
