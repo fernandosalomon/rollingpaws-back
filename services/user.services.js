@@ -1,5 +1,6 @@
 const UserModel = require("../models/user.model");
 const bcrypt = require(`bcrypt`);
+const jwt = require("jsonwebtoken");
 
 const getAllUsersService = async () => {
   try {
@@ -65,6 +66,11 @@ const createNewUserService = async (body) => {
         const salt = bcrypt.genSaltSync(10);
 
         newUser.password = bcrypt.hashSync(newUser.password, salt);
+
+        const payload = {
+          id: newUser._id,
+          role: newUser.role,
+        };
 
         try {
           const registeredUser = await newUser.save();

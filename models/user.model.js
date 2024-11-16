@@ -30,7 +30,7 @@ const userSchema = new Schema(
         "Formato de número de teléfono invalido",
       ],
     },
-    adress: {
+    address: {
       type: String,
       match: [
         /^[a-zA-ZáéíóúÁÉÍÓÚñÑ'0-9\s]+$/,
@@ -45,9 +45,31 @@ const userSchema = new Schema(
         ref: "Pet",
       },
     ],
+    role: {
+      type: String,
+      enum: ["admin", "user"],
+      default: "user",
+      required: true,
+    },
+    banned: {
+      type: Boolean,
+      default: 0,
+      required: true,
+    },
+    logged: {
+      type: Boolean,
+      default: 0,
+      required: true,
+    },
   },
   { timestamps: true }
 );
+
+userSchema.methods.toJSON = function () {
+  const { password, createdAt, updatedAt, __v, banned, logged, ...userData } =
+    this.toObject();
+  return userData;
+};
 
 const UserModel = model("User", userSchema);
 module.exports = UserModel;
