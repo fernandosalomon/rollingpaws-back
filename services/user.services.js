@@ -2,9 +2,11 @@ const UserModel = require("../models/user.model");
 const bcrypt = require(`bcrypt`);
 const jwt = require("jsonwebtoken");
 
-const getAllUsersService = async () => {
+const getAllUsersService = async (userID) => {
   try {
-    const users = await UserModel.find().populate("pets");
+    const users = await UserModel.find({
+      _id: { $ne: userID },
+    }).populate("pets");
     return {
       data: users,
       statusCode: 200,
@@ -49,7 +51,6 @@ const createNewUserService = async (body) => {
     };
   } else {
     const userExists = await UserModel.findOne({ email: email });
-    console.log(userExists);
     if (!userExists) {
       if (
         /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&áéíóúÁÉÍÓÚñÑ]).{8,}$/.test(
@@ -72,10 +73,13 @@ const createNewUserService = async (body) => {
           role: newUser.role,
         };
 
+        const token = jwt.sign(payload, process.env.JWT_SECRET);
+
         try {
           const registeredUser = await newUser.save();
           return {
             data: registeredUser,
+            token: token,
             statusCode: 201,
           };
         } catch (error) {

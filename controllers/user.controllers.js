@@ -6,10 +6,13 @@ const {
   updateUserService,
   deleteUserByIdService,
 } = require("../services/user.services");
+const jwt = require("jsonwebtoken");
 
 const getAllUsersController = async (req, res) => {
+  const token = req.headers.authtoken;
+  const userID = jwt.verify(token, process.env.JWT_SECRET).id;
   try {
-    const users = await getAllUsersService();
+    const users = await getAllUsersService(userID);
     users.statusCode === 200
       ? res.status(users.statusCode).json(users.data)
       : res.status(users.statusCode).json(users.message);
@@ -35,7 +38,7 @@ const createNewUserController = async (req, res) => {
   try {
     const newUser = await createNewUserService(req.body);
     newUser.statusCode === 201
-      ? res.status(newUser.statusCode).json(newUser.data)
+      ? res.status(newUser.statusCode).json(newUser)
       : res.status(newUser.statusCode).json(newUser.message);
   } catch (error) {
     console.log(error);
