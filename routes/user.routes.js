@@ -7,6 +7,7 @@ const {
   deleteUserByIdController,
   loginUserController,
   logoutUserController,
+  banUserController,
 } = require("../controllers/user.controllers");
 
 const router = Router();
@@ -19,6 +20,7 @@ router.post("/logout", logoutUserController);
 router.post("/register", createNewUserController);
 
 router.put("/:userID", updateUserController);
+router.put("/ban-user/:userID", banUserController);
 
 router.delete("/:userID", deleteUserByIdController);
 

@@ -66,7 +66,7 @@ const userSchema = new Schema(
 );
 
 userSchema.methods.toJSON = function () {
-  const { password, createdAt, updatedAt, __v, banned, logged, ...userData } =
+  const { password, createdAt, updatedAt, __v, logged, ...userData } =
     this.toObject();
   return userData;
 };

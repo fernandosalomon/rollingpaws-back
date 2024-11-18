@@ -124,8 +124,6 @@ const loginUserService = async (body) => {
             { new: true }
           );
 
-          console.log(isLogged);
-
           return {
             role: userExist.role,
             token: token,
@@ -211,6 +209,39 @@ const updateUserService = async (userID, body) => {
   }
 };
 
+const banUserService = async (userID) => {
+  try {
+    const userExist = await UserModel.findById(userID);
+
+    if (!userExist) {
+      return {
+        message: "El ID no corresponde con ningún usuario registrado",
+        statusCode: 400,
+      };
+    } else {
+      const updatedUser = await UserModel.findByIdAndUpdate(
+        userID,
+        { banned: !userExist.banned },
+        {
+          new: true,
+        }
+      );
+      return {
+        message: `El usuario fue ${
+          !userExist.banned ? "bloqueado" : "desbloqueado"
+        } con exito`,
+        statusCode: 200,
+      };
+    }
+  } catch (error) {
+    console.log(error);
+    return {
+      message: `Ocurrio un error tratando de actualizar los datos del usuario.`,
+      statusCode: 500,
+    };
+  }
+};
+
 const deleteUserByIdService = async (userID) => {
   try {
     const deletedUser = await UserModel.findByIdAndDelete(userID);
@@ -234,5 +265,6 @@ module.exports = {
   loginUserService,
   logoutUserService,
   updateUserService,
+  banUserService,
   deleteUserByIdService,
 };

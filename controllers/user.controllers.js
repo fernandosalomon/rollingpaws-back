@@ -7,6 +7,7 @@ const {
   deleteUserByIdService,
   loginUserService,
   logoutUserService,
+  banUserService,
 } = require("../services/user.services");
 const jwt = require("jsonwebtoken");
 
@@ -52,7 +53,9 @@ const loginUserController = async (req, res) => {
   try {
     const loggedUser = await loginUserService(req.body);
     loggedUser.statusCode === 200
-      ? res.status(loggedUser.statusCode).json(loggedUser)
+      ? res
+          .status(loggedUser.statusCode)
+          .json({ token: loggedUser.token, role: loggedUser.role })
       : res.status(loggedUser.statusCode).json(loggedUser.message);
   } catch (error) {
     console.log(error);
@@ -86,6 +89,16 @@ const updateUserController = async (req, res) => {
   }
 };
 
+const banUserController = async (req, res) => {
+  try {
+    const banUser = await banUserService(req.params.userID);
+    res.status(banUser.statusCode).json(banUser.message);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+};
+
 const deleteUserByIdController = async (req, res) => {
   try {
     const deletedUser = await deleteUserByIdService(req.params.userID);
@@ -105,5 +118,6 @@ module.exports = {
   loginUserController,
   logoutUserController,
   updateUserController,
+  banUserController,
   deleteUserByIdController,
 };
