@@ -42,9 +42,9 @@ const getUserByIdService = async (userID) => {
 };
 
 const createNewUserService = async (body) => {
-  const { fullname, email, password, phone, address } = body;
+  const { firstName, lastName, email, password, phone, address } = body;
 
-  if (!fullname || !email || !password) {
+  if (!firstName || !lastName || !email || !password) {
     return {
       message: "Faltan completar campos obligatorios",
       statusCode: 400,
@@ -58,7 +58,8 @@ const createNewUserService = async (body) => {
         )
       ) {
         const newUser = new UserModel({
-          fullname,
+          firstName,
+          lastName,
           email,
           password,
           phone,
@@ -176,6 +177,7 @@ const logoutUserService = async (userID) => {
 };
 
 const updateUserService = async (userID, body) => {
+
   try {
     const userExist = await UserModel.findById(userID);
 

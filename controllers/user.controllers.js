@@ -37,6 +37,20 @@ const getUserByIdController = async (req, res) => {
   }
 };
 
+const getUserSelfDataController = async (req, res) => {
+  const token = req.headers.authtoken;
+  const userID = jwt.verify(token, process.env.JWT_SECRET).id;
+  try {
+    const user = await getUserByIdService(userID);
+    user.statusCode === 200
+      ? res.status(user.statusCode).json(user.data)
+      : res.status(user.statusCode).json(user.message);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+};
+
 const createNewUserController = async (req, res) => {
   try {
     const newUser = await createNewUserService(req.body);
@@ -65,7 +79,6 @@ const loginUserController = async (req, res) => {
 
 const logoutUserController = async (req, res) => {
   const token = req.headers.authtoken;
-
   const userID = jwt.verify(token, process.env.JWT_SECRET).id;
 
   try {
@@ -114,6 +127,7 @@ const deleteUserByIdController = async (req, res) => {
 module.exports = {
   getAllUsersController,
   getUserByIdController,
+  getUserSelfDataController,
   createNewUserController,
   loginUserController,
   logoutUserController,

@@ -2,7 +2,15 @@ const { model, Schema } = require("mongoose");
 
 const userSchema = new Schema(
   {
-    fullname: {
+    firstName: {
+      type: String,
+      required: true,
+      match: [
+        /^[a-zA-ZáéíóúÁÉÍÓÚñÑ][a-zA-ZáéíóúÁÉÍÓÚñÑ' ]*$/,
+        "Formato de nombre incorrecto.",
+      ],
+    },
+    lastName: {
       type: String,
       required: true,
       match: [
@@ -36,6 +44,24 @@ const userSchema = new Schema(
         /^[a-zA-ZáéíóúÁÉÍÓÚñÑ'0-9\s]+$/,
         "Formato de dirección incorrecto",
       ],
+      minLength: 2,
+      maxLength: 40,
+    },
+    city: {
+      type: String,
+      match: [/^[a-zA-ZáéíóúÁÉÍÓÚñÑ'\s]+$/, "Formato de ciudad incorrecto"],
+      minLength: 2,
+      maxLength: 40,
+    },
+    province: {
+      type: String,
+      match: [/^[a-zA-ZáéíóúÁÉÍÓÚñÑ'\s]+$/, "Formato de provincia incorrecto"],
+      minLength: 2,
+      maxLength: 40,
+    },
+    zipCode: {
+      type: String,
+      match: [/^\d{4}$/, "Formato de código postal incorrecto"],
       minLength: 2,
       maxLength: 40,
     },

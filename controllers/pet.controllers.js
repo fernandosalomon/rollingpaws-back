@@ -1,4 +1,5 @@
 const PetModel = require("../models/pet.model");
+
 const {
   getAllPetsService,
   getPetByIdService,
@@ -6,6 +7,8 @@ const {
   updatePetService,
   deletePetByIdService,
 } = require("../services/pets.services");
+
+const jwt = require("jsonwebtoken");
 
 const getAllPetsController = async (req, res) => {
   try {
@@ -32,8 +35,10 @@ const getPetByIdController = async (req, res) => {
 };
 
 const createNewPetController = async (req, res) => {
+  const token = req.headers.authtoken;
+  const userID = jwt.verify(token, process.env.JWT_SECRET).id;
   try {
-    const createdPet = await createNewPetService(req.body);
+    const createdPet = await createNewPetService(req.body, userID);
     createdPet.statusCode === 201
       ? res.status(createdPet.statusCode).json(createdPet.data)
       : res.status(createdPet.statusCode).json(createdPet.message);

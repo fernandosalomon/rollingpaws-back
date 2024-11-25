@@ -8,19 +8,22 @@ const {
   loginUserController,
   logoutUserController,
   banUserController,
+  getUserSelfDataController,
 } = require("../controllers/user.controllers");
 
 const router = Router();
 
 router.get("/", getAllUsersController);
+router.get("/self", getUserSelfDataController);
 router.get("/:userID", getUserByIdController);
 
 router.post("/", loginUserController);
-router.post("/logout", logoutUserController);
+
 router.post("/register", createNewUserController);
 
-router.put("/:userID", updateUserController);
+router.put("/logout", logoutUserController);
 router.put("/ban-user/:userID", banUserController);
+router.put("/:userID", updateUserController);
 
 router.delete("/:userID", deleteUserByIdController);
 

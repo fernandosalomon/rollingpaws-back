@@ -44,18 +44,9 @@ const getPetByIdService = async (petID) => {
   }
 };
 
-const createNewPetService = async (body) => {
-  const {
-    name,
-    species,
-    breed,
-    sex,
-    color,
-    height,
-    weight,
-    observations,
-    owner,
-  } = body;
+const createNewPetService = async (body, userID) => {
+  const { name, species, sex, size, age, health, observations } = body;
+  const owner = userID;
 
   if (!name || !species) {
     return {
@@ -66,11 +57,10 @@ const createNewPetService = async (body) => {
     const newPet = new PetModel({
       name,
       species,
-      breed,
       sex,
-      color,
-      weight,
-      height,
+      size,
+      age,
+      health,
       observations,
       owner,
     });

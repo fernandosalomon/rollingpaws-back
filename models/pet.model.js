@@ -9,45 +9,32 @@ const petSchema = new Schema(
         /^[a-zA-ZáéíóúÁÉÍÓÚñÑ][a-zA-ZáéíóúÁÉÍÓÚñÑ' ]*$/,
         "Formato de nombre incorrecto.",
       ],
+      unique: true,
     },
     species: {
       type: String,
-      maxLength: 20,
+      maxLength: 50,
       required: true,
       match: [
         /^[a-zA-ZáéíóúÁÉÍÓÚñÑ][a-zA-ZáéíóúÁÉÍÓÚñÑ' ]*$/,
-        "Formato de nombre incorrecto.",
-      ],
-    },
-    breed: {
-      type: String,
-      maxLength: 20,
-      match: [
-        /^[a-zA-ZáéíóúÁÉÍÓÚñÑ][a-zA-ZáéíóúÁÉÍÓÚñÑ' ]*$/,
-        "Formato de nombre incorrecto.",
+        "Formato de especie incorrecto.",
       ],
     },
     sex: {
       type: String,
-      enum: ["male", "female"],
+      enum: [0, 1],
     },
-    color: {
+    size: {
       type: String,
-      maxLength: 20,
-      match: [
-        /^[a-zA-ZáéíóúÁÉÍÓÚñÑ][a-zA-ZáéíóúÁÉÍÓÚñÑ' ]*$/,
-        "Formato de nombre incorrecto.",
-      ],
+      enum: [0, 1, 2, 3, 4],
     },
-    weight: {
-      type: Number,
-      min: [0.1],
-      max: [1000],
+    age: {
+      type: String,
+      enum: [0, 1, 2, 3],
     },
-    height: {
-      type: Number,
-      min: [1],
-      max: [550],
+    health: {
+      type: String,
+      enum: [0, 1, 2, 3],
     },
     observations: {
       type: String,
@@ -61,7 +48,6 @@ const petSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      unique: true,
     },
   },
   { timestamps: true }
