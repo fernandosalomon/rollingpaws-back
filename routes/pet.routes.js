@@ -5,12 +5,14 @@ const {
   createNewPetController,
   updatePetController,
   deletePetByIdController,
+  getAllPetsFromUserController,
 } = require("../controllers/pet.controllers");
 
 const router = Router();
 
-router.get("/", getAllPetsController);
+router.get("/user", getAllPetsFromUserController);
 router.get("/:petID", getPetByIdController);
+router.get("/", getAllPetsController);
 
 router.post("/", createNewPetController);
 

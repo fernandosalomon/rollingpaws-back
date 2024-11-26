@@ -44,6 +44,24 @@ const getPetByIdService = async (petID) => {
   }
 };
 
+const getAllPetsFromUserService = async (userID) => {
+  try {
+    const user = await UserModel.findById(userID).populate("pets");
+
+    return {
+      data: user.pets,
+      statusCode: 200,
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      message:
+        "Hubo un error tratando de recuperar los datos de la base de datos.",
+      statusCode: 500,
+    };
+  }
+};
+
 const createNewPetService = async (body, userID) => {
   const { name, species, sex, size, age, health, observations } = body;
   const owner = userID;
@@ -67,13 +85,10 @@ const createNewPetService = async (body, userID) => {
 
     try {
       const createdPet = await newPet.save();
-
-      const ownerData = await UserModel.findById(owner);
-      ownerData.pets.push(createdPet._id);
       try {
         const updatedPetsUser = await UserModel.findByIdAndUpdate(
           owner,
-          ownerData,
+          { $push: { pets: createdPet._id } },
           { new: true }
         );
       } catch (error) {
@@ -144,6 +159,7 @@ const deletePetByIdService = async (petID) => {
 module.exports = {
   getAllPetsService,
   getPetByIdService,
+  getAllPetsFromUserService,
   createNewPetService,
   updatePetService,
   deletePetByIdService,

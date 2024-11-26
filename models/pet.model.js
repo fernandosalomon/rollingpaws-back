@@ -9,7 +9,6 @@ const petSchema = new Schema(
         /^[a-zA-ZáéíóúÁÉÍÓÚñÑ][a-zA-ZáéíóúÁÉÍÓÚñÑ' ]*$/,
         "Formato de nombre incorrecto.",
       ],
-      unique: true,
     },
     species: {
       type: String,

@@ -6,6 +6,7 @@ const {
   createNewPetService,
   updatePetService,
   deletePetByIdService,
+  getAllPetsFromUserService,
 } = require("../services/pets.services");
 
 const jwt = require("jsonwebtoken");
@@ -25,6 +26,20 @@ const getAllPetsController = async (req, res) => {
 const getPetByIdController = async (req, res) => {
   try {
     const pet = await getPetByIdService(req.params.petID);
+    pet.statusCode === 200
+      ? res.status(pet.statusCode).json(pet.data)
+      : res.status(pet.statusCode).json(pet.message);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+};
+
+const getAllPetsFromUserController = async (req, res) => {
+  const token = req.headers.authtoken;
+  const userID = jwt.verify(token, process.env.JWT_SECRET).id;
+  try {
+    const pet = await getAllPetsFromUserService(userID);
     pet.statusCode === 200
       ? res.status(pet.statusCode).json(pet.data)
       : res.status(pet.statusCode).json(pet.message);
@@ -75,6 +90,7 @@ const deletePetByIdController = async (req, res) => {
 module.exports = {
   getAllPetsController,
   getPetByIdController,
+  getAllPetsFromUserController,
   createNewPetController,
   updatePetController,
   deletePetByIdController,
