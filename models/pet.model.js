@@ -10,13 +10,16 @@ const petSchema = new Schema(
         "Formato de nombre incorrecto.",
       ],
     },
-    species: {
+    specie: {
       type: String,
-      maxLength: 50,
       required: true,
+      enum: [0, 1, 2, 3, 4, 5, 6],
+    },
+    breed: {
+      type: String,
       match: [
         /^[a-zA-ZáéíóúÁÉÍÓÚñÑ][a-zA-ZáéíóúÁÉÍÓÚñÑ' ]*$/,
-        "Formato de especie incorrecto.",
+        "Formato de raza incorrecto.",
       ],
     },
     sex: {
@@ -25,15 +28,15 @@ const petSchema = new Schema(
     },
     size: {
       type: String,
-      enum: [0, 1, 2, 3, 4],
+      enum: [1, 2, 3, 4, 5],
     },
     age: {
       type: String,
-      enum: [0, 1, 2, 3],
+      enum: [1, 2, 3, 4],
     },
     health: {
       type: String,
-      enum: [0, 1, 2, 3],
+      enum: [1, 2, 3, 4],
     },
     observations: {
       type: String,

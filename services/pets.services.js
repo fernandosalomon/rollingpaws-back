@@ -63,10 +63,11 @@ const getAllPetsFromUserService = async (userID) => {
 };
 
 const createNewPetService = async (body, userID) => {
-  const { name, species, sex, size, age, health, observations } = body;
+  const { name, specie, sex, size, age, health, observations } = body;
   const owner = userID;
 
-  if (!name || !species) {
+  if (!name || !specie) {
+    console.log(name, specie);
     return {
       message: "Faltan completar campos obligatorios",
       statusCode: 400,
@@ -74,7 +75,7 @@ const createNewPetService = async (body, userID) => {
   } else {
     const newPet = new PetModel({
       name,
-      species,
+      specie,
       sex,
       size,
       age,
