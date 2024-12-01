@@ -5,10 +5,22 @@ const appointmentsSchema = new Schema(
     date: {
       type: Date,
       required: true,
+      validate: {
+        validator: function (value) {
+          const today = new Date();
+          const dateToValidate = new Date(value);
+          return today < dateToValidate;
+        },
+        message: "La fecha de la cita no puede ser anterior a la fecha actual.",
+      },
     },
     doctor: {
       type: String,
       required: true,
+      match: [
+        /^[a-zA-ZáéíóúÁÉÍÓÚñÑ][a-zA-ZáéíóúÁÉÍÓÚñÑ'. ]*$/,
+        "Formato de nombre incorrecto.",
+      ],
     },
     pet: {
       type: Schema.Types.ObjectId,
@@ -17,6 +29,14 @@ const appointmentsSchema = new Schema(
     },
     observations: {
       type: String,
+      max: {
+        value: 200,
+        message: "Máximo permitido: 200 caracteres",
+      },
+      match: [
+        /^[a-zA-ZáéíóúÁÉÍÓÚñÑ'0-9\s/$\-_.,()]+$/,
+        "El texto no tiene el formáto correcto (Solo letras, numeros y caracteres especiales: /$-_,.())",
+      ],
     },
   },
   { timestamps: true }
