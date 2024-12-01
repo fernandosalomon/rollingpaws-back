@@ -67,7 +67,6 @@ const createNewPetService = async (body, userID) => {
   const owner = userID;
 
   if (!name || !specie) {
-    console.log(name, specie);
     return {
       message: "Faltan completar campos obligatorios",
       statusCode: 400,
