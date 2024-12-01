@@ -16,7 +16,7 @@ const doctorSchema = new Schema(
         },
       ],
     },
-    StartWorkingHours: {
+    startWorkingHour: {
       type: Number,
       required: true,
       enum: {
@@ -27,7 +27,7 @@ const doctorSchema = new Schema(
         message: "Horario invalido. El horario debe ser un valor entre 0 y 23.",
       },
     },
-    EndWorkingHours: {
+    endWorkingHour: {
       type: Number,
       required: true,
       enum: {
