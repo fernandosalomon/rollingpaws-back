@@ -10,6 +10,7 @@ const {
 
 const router = Router();
 
+router.get("/user/:userID", getAllPetsFromUserController);
 router.get("/user", getAllPetsFromUserController);
 router.get("/:petID", getPetByIdController);
 router.get("/", getAllPetsController);

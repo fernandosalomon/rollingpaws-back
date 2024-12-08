@@ -177,7 +177,6 @@ const logoutUserService = async (userID) => {
 };
 
 const updateUserService = async (userID, body) => {
-
   try {
     const userExist = await UserModel.findById(userID);
 
@@ -190,17 +189,7 @@ const updateUserService = async (userID, body) => {
       const updatedUser = await UserModel.findByIdAndUpdate(userID, body, {
         new: true,
       });
-      const errors = updatedUser.validateSync();
-
-      if (errors) {
-        return {
-          message:
-            "Error al actualizar información del usuario. Uno o más de los campos proporcionados tienen errores",
-          statusCode: 400,
-        };
-      } else {
-        return { data: updatedUser, statusCode: 200 };
-      }
+      return { data: updatedUser, statusCode: 200 };
     }
   } catch (error) {
     console.log(error);

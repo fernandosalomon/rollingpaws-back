@@ -36,8 +36,16 @@ const getPetByIdController = async (req, res) => {
 };
 
 const getAllPetsFromUserController = async (req, res) => {
-  const token = req.headers.authtoken;
-  const userID = jwt.verify(token, process.env.JWT_SECRET).id;
+  let userID = null;
+  if (req.params.userID) {
+    userID = req.params.userID;
+  } else if (req.headers.authtoken) {
+    const token = req.headers.authtoken;
+    userID = jwt.verify(token, process.env.JWT_SECRET).id;
+  } else {
+    res.status(400).json({ message: "BAD REQUEST: Usuario no especificado" });
+    return null;
+  }
   try {
     const pet = await getAllPetsFromUserService(userID);
     pet.statusCode === 200
