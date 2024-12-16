@@ -37,7 +37,6 @@ const userSchema = new Schema(
         /^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/,
         "Formato de número de teléfono invalido",
       ],
-      default: "",
     },
     address: {
       type: String,
@@ -47,28 +46,24 @@ const userSchema = new Schema(
       ],
       minLength: 2,
       maxLength: 40,
-      default: "",
     },
     city: {
       type: String,
       match: [/^[a-zA-ZáéíóúÁÉÍÓÚñÑ'\s]+$/, "Formato de ciudad incorrecto"],
       minLength: 2,
       maxLength: 40,
-      default: "",
     },
     province: {
       type: String,
       match: [/^[a-zA-ZáéíóúÁÉÍÓÚñÑ'\s]+$/, "Formato de provincia incorrecto"],
       minLength: 2,
       maxLength: 40,
-      default: "",
     },
     zipCode: {
       type: String,
       match: [/^\d{4}$/, "Formato de código postal incorrecto"],
       minLength: 2,
       maxLength: 40,
-      default: "",
     },
     pets: [
       {

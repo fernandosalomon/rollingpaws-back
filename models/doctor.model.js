@@ -1,4 +1,5 @@
 const { model, Schema } = require("mongoose");
+const AppointmentsModel = require("./appointments.model");
 
 const doctorSchema = new Schema(
   {
@@ -44,6 +45,12 @@ const doctorSchema = new Schema(
         "El texto no tiene el formáto correcto (Solo letras, numeros y caracteres especiales: /$-_,.())",
       ],
     },
+    appointments: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Appointments",
+      },
+    ],
   },
   { timestamps: true }
 );

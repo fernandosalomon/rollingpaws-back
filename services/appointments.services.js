@@ -1,4 +1,8 @@
 const AppointmentsModel = require("../models/appointments.model");
+const {
+  updateDoctorService,
+  getDoctorByIdService,
+} = require("./doctor.services");
 
 const getAllAppointmentsService = async () => {
   try {
@@ -57,6 +61,10 @@ const createAppointmentService = async (body) => {
     });
     try {
       const createdAppointment = await appointment.save();
+      const doctorData = await getDoctorByIdService(doctor);
+      const newAppointmentList = doctorData.data.appointments;
+      newAppointmentList.push(appointment);
+      updateDoctorService(doctor, { appointment: newAppointmentList });
       return {
         data: createdAppointment,
         statusCode: 201,

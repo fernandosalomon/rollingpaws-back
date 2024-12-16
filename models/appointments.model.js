@@ -15,12 +15,9 @@ const appointmentsSchema = new Schema(
       },
     },
     doctor: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: "Doctor",
       required: true,
-      match: [
-        /^[a-zA-ZáéíóúÁÉÍÓÚñÑ][a-zA-ZáéíóúÁÉÍÓÚñÑ'. ]*$/,
-        "Formato de nombre incorrecto.",
-      ],
     },
     pet: {
       type: Schema.Types.ObjectId,
