@@ -41,6 +41,74 @@ const getDoctorByIdService = async (doctorID) => {
   }
 };
 
+const getDoctorFreeHoursService = async (doctorID, pickedDate) => {
+  try {
+    const doctor = await DoctorModel.findById(doctorID).populate(
+      "appointments"
+    );
+    const hoursGenerator = (startWorkingHour, endWorkingHour) => {
+      const hoursArray = [];
+      for (let hour = startWorkingHour; hour < endWorkingHour; hour++) {
+        hoursArray.push(`${hour}:00`);
+        hoursArray.push(`${hour}:30`);
+      }
+      return hoursArray;
+    };
+    const hours = hoursGenerator(
+      doctor.startWorkingHour,
+      doctor.endWorkingHour
+    );
+    const filterOccupiedHours = (hoursArray, appointmentList, pickedDate) => {
+      const filterHours = hoursArray;
+      appointmentList.map((appointment) => {
+        const startTime = new Date(appointment.startDate);
+        const endTime = new Date(appointment.endDate);
+        const pickDate = new Date(pickedDate);
+
+        if (startTime > pickDate && endTime > pickDate) {
+          filterHours.map((time, index) => {
+            const [hour, minutes] = time.split(":");
+            if (
+              (hour >= startTime.getUTCHours() &&
+                minutes >= startTime.getMinutes()) ||
+              hour <= endTime.getUTCHours() ||
+              (hour === endTime.getUTCHours() &&
+                minutes <= endTime.getMinutes())
+            ) {
+              if (
+                hour < endTime.getUTCHours() ||
+                (hour === endTime.getUTCHours() &&
+                  minutes < endTime.getMinutes())
+              ) {
+                filterHours.splice(index, 1);
+              }
+            }
+          });
+        }
+      });
+      return filterHours;
+    };
+
+    const filteredHours = filterOccupiedHours(
+      hours,
+      doctor.appointments,
+      pickedDate
+    );
+
+    return {
+      data: filteredHours,
+      statusCode: 200,
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      message:
+        "Hubo un error al tratar de crear al nuevo veterinario en la base de datos.",
+      statusCode: 500,
+    };
+  }
+};
+
 const createDoctorService = async (body) => {
   const { user, workingDays, startWorkingHour, endWorkingHour, description } =
     body;
@@ -123,6 +191,7 @@ const deleteDoctorService = async (doctorID) => {
 module.exports = {
   getAllDoctorsService,
   getDoctorByIdService,
+  getDoctorFreeHoursService,
   createDoctorService,
   updateDoctorService,
   deleteDoctorService,

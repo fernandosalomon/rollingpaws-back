@@ -5,12 +5,14 @@ const {
   createDoctorController,
   updateDoctorController,
   deleteDoctorController,
+  getDoctorFreeHoursController,
 } = require("../controllers/doctor.controllers");
 
 const router = Router();
 
 router.get("/", getAllDoctorsController);
 router.get("/:doctorID", getDoctorByIdController);
+router.get("/clinic-hours/:doctorID&:pickedDate", getDoctorFreeHoursController);
 
 router.post("/", createDoctorController);
 

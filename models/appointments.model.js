@@ -2,7 +2,19 @@ const { model, Schema } = require("mongoose");
 
 const appointmentsSchema = new Schema(
   {
-    date: {
+    startDate: {
+      type: Date,
+      required: true,
+      validate: {
+        validator: function (value) {
+          const today = new Date();
+          const dateToValidate = new Date(value);
+          return today < dateToValidate;
+        },
+        message: "La fecha de la cita no puede ser anterior a la fecha actual.",
+      },
+    },
+    endDate: {
       type: Date,
       required: true,
       validate: {

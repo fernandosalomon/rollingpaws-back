@@ -6,7 +6,10 @@ const {
 
 const getAllAppointmentsService = async () => {
   try {
-    const appointments = await AppointmentsModel.find().populate("pet");
+    const appointments = await AppointmentsModel.find()
+      .populate("pet")
+      .populate({ path: "doctor", populate: { path: "user", model: "User" } });
+
     return {
       data: appointments,
       statusCode: 200,
@@ -45,16 +48,17 @@ const getAppointmentsByIdService = async (appointmentID) => {
 };
 
 const createAppointmentService = async (body) => {
-  const { date, doctor, pet, observations } = body;
+  const { startDate, endDate, doctor, pet, observations } = body;
 
-  if (!date || !doctor || !pet) {
+  if (!startDate || !startDate || !doctor || !pet) {
     return {
       message: "Faltan completar campos obligatorios",
       statusCode: 400,
     };
   } else {
     const appointment = new AppointmentsModel({
-      date,
+      startDate,
+      endDate,
       doctor,
       pet,
       observations,

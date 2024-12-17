@@ -5,6 +5,7 @@ const {
   updateDoctorService,
   deleteDoctorService,
   getDoctorByIdService,
+  getDoctorFreeHoursService,
 } = require("../services/doctor.services");
 
 const getAllDoctorsController = async (req, res) => {
@@ -26,6 +27,23 @@ const getDoctorByIdController = async (req, res) => {
     doctor.statusCode === 200
       ? res.status(doctor.statusCode).json(doctor.data)
       : res.status(doctor.statusCode).json(doctor.message);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+};
+
+const getDoctorFreeHoursController = async (req, res) => {
+  const doctorID = req.params.doctorID;
+  const pickedDate = req.params.pickedDate;
+  try {
+    const doctorFreeHours = await getDoctorFreeHoursService(
+      doctorID,
+      pickedDate
+    );
+    doctorFreeHours.statusCode === 200
+      ? res.status(doctorFreeHours.statusCode).json(doctorFreeHours.data)
+      : res.status(doctorFreeHours.statusCode).json(doctorFreeHours.message);
   } catch (error) {
     console.log(error);
     res.status(500).json(error);
@@ -74,6 +92,7 @@ const deleteDoctorController = async (req, res) => {
 module.exports = {
   getAllDoctorsController,
   getDoctorByIdController,
+  getDoctorFreeHoursController,
   createDoctorController,
   updateDoctorController,
   deleteDoctorController,
