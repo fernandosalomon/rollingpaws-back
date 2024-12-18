@@ -35,11 +35,11 @@ const getDoctorByIdController = async (req, res) => {
 
 const getDoctorFreeHoursController = async (req, res) => {
   const doctorID = req.params.doctorID;
-  const pickedDate = req.params.pickedDate;
+  const selectedDate = req.params.selectedDate;
   try {
     const doctorFreeHours = await getDoctorFreeHoursService(
       doctorID,
-      pickedDate
+      selectedDate
     );
     doctorFreeHours.statusCode === 200
       ? res.status(doctorFreeHours.statusCode).json(doctorFreeHours.data)

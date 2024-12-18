@@ -18,20 +18,20 @@ const doctorSchema = new Schema(
       ],
     },
     startWorkingHour: {
-      type: Number,
+      type: String,
       required: true,
-      enum: [
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-        20, 21, 22, 23,
+      match: [
+        /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/,
+        "El texto no tiene el formáto correcto (Solo letras, numeros y caracteres especiales: /$-_,.())",
       ],
     },
 
     endWorkingHour: {
-      type: Number,
+      type: String,
       required: true,
-      enum: [
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-        20, 21, 22, 23,
+      match: [
+        /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/,
+        "El texto no tiene el formáto correcto (Solo letras, numeros y caracteres especiales: /$-_,.())",
       ],
     },
     description: {

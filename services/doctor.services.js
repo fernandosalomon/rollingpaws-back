@@ -1,3 +1,4 @@
+const AppointmentsModel = require("../models/appointments.model");
 const DoctorModel = require("../models/doctor.model");
 
 const getAllDoctorsService = async () => {
@@ -41,69 +42,68 @@ const getDoctorByIdService = async (doctorID) => {
   }
 };
 
-const getDoctorFreeHoursService = async (doctorID, pickedDate) => {
+const getDoctorFreeHoursService = async (doctorID, selectedDate) => {
+  let freeHourList = [];
+  const timeJump = 30;
+  const parseTime = (value) => {
+    const hour = Math.floor(Number(value) / 60);
+    const minutes = Number(value) - hour * 60;
+    return `${hour < 10 ? "0" : ""}${hour}:${
+      minutes < 10 ? "0" : ""
+    }${minutes}`;
+  };
+
   try {
-    const doctor = await DoctorModel.findById(doctorID).populate(
-      "appointments"
-    );
-    const hoursGenerator = (startWorkingHour, endWorkingHour) => {
-      const hoursArray = [];
-      for (let hour = startWorkingHour; hour < endWorkingHour; hour++) {
-        hoursArray.push(`${hour}:00`);
-        hoursArray.push(`${hour}:30`);
+    const doctorData = await DoctorModel.findById(doctorID);
+    const startHour =
+      Number(doctorData.startWorkingHour.split(":")[0]) * 60 +
+      Number(doctorData.startWorkingHour.split(":")[1]);
+    const endHour =
+      Number(doctorData.endWorkingHour.split(":")[0]) * 60 +
+      Number(doctorData.endWorkingHour.split(":")[1]);
+
+    for (let hour = startHour; hour < endHour; hour = hour + timeJump) {
+      freeHourList.push(hour);
+    }
+
+    const vetAppointments = await AppointmentsModel.find({ doctor: doctorID });
+
+    vetAppointments.map((appointment) => {
+      if (
+        new Date(appointment.startDate).getFullYear() ===
+          new Date(selectedDate).getFullYear() &&
+        new Date(appointment.startDate).getMonth() ===
+          new Date(selectedDate).getMonth() &&
+        new Date(appointment.startDate).getDate() ===
+          new Date(selectedDate).getDate()
+      ) {
+        const appointmentStart =
+          new Date(appointment.startDate).getUTCHours() * 60 +
+          new Date(appointment.startDate).getMinutes();
+
+        const appointmentEnd =
+          new Date(appointment.endDate).getUTCHours() * 60 +
+          new Date(appointment.endDate).getMinutes();
+
+        const tempArray = freeHourList.filter(
+          (hour) => !(hour >= appointmentStart && hour < appointmentEnd)
+        );
+
+        freeHourList = [...tempArray];
       }
-      return hoursArray;
-    };
-    const hours = hoursGenerator(
-      doctor.startWorkingHour,
-      doctor.endWorkingHour
-    );
-    const filterOccupiedHours = (hoursArray, appointmentList, pickedDate) => {
-      const filterHours = hoursArray;
-      appointmentList.map((appointment) => {
-        const startTime = new Date(appointment.startDate);
-        const endTime = new Date(appointment.endDate);
-        const pickDate = new Date(pickedDate);
+    });
 
-        if (startTime > pickDate && endTime > pickDate) {
-          filterHours.map((time, index) => {
-            const [hour, minutes] = time.split(":");
-            if (
-              (hour >= startTime.getUTCHours() &&
-                minutes >= startTime.getMinutes()) ||
-              hour <= endTime.getUTCHours() ||
-              (hour === endTime.getUTCHours() &&
-                minutes <= endTime.getMinutes())
-            ) {
-              if (
-                hour < endTime.getUTCHours() ||
-                (hour === endTime.getUTCHours() &&
-                  minutes < endTime.getMinutes())
-              ) {
-                filterHours.splice(index, 1);
-              }
-            }
-          });
-        }
-      });
-      return filterHours;
-    };
-
-    const filteredHours = filterOccupiedHours(
-      hours,
-      doctor.appointments,
-      pickedDate
-    );
+    freeHourList = freeHourList.map((hour) => parseTime(hour));
 
     return {
-      data: filteredHours,
+      data: freeHourList,
       statusCode: 200,
     };
   } catch (error) {
     console.log(error);
     return {
       message:
-        "Hubo un error al tratar de crear al nuevo veterinario en la base de datos.",
+        "Hubo un error tratando de recuperar los datos de la base de datos.",
       statusCode: 500,
     };
   }

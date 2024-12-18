@@ -12,7 +12,10 @@ const router = Router();
 
 router.get("/", getAllDoctorsController);
 router.get("/:doctorID", getDoctorByIdController);
-router.get("/clinic-hours/:doctorID&:pickedDate", getDoctorFreeHoursController);
+router.get(
+  "/clinic-hours/:doctorID&:selectedDate",
+  getDoctorFreeHoursController
+);
 
 router.post("/", createDoctorController);
 
