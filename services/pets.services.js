@@ -1,5 +1,6 @@
 const PetModel = require("../models/pet.model");
 const UserModel = require("../models/user.model");
+const cloudinary = require("../helpers/cloudinary.config")
 
 const getAllPetsService = async () => {
   try {
@@ -140,6 +141,27 @@ const updatePetService = async (petID, body) => {
   }
 };
 
+const updatePetPicService = async (petID, file) => {
+  try {
+    const pet = await PetModel.findById(petID);
+    const petImage = await cloudinary.uploader.upload(file.path)
+
+    pet.image = petImage.secure_url;
+    const updatedPet = await pet.save();
+
+    return {
+      data: petImage.secure_url,
+      statusCode: 200
+    }
+  } catch (error) {
+    console.log(error);
+    return {
+      message: "Ocurrio un error tratando de cargar la imagen de la mascota.",
+      statusCode: 500,
+    };
+  }
+}
+
 const deletePetByIdService = async (petID) => {
   try {
     const deletedPet = await PetModel.findByIdAndDelete(petID);
@@ -162,5 +184,6 @@ module.exports = {
   getAllPetsFromUserService,
   createNewPetService,
   updatePetService,
+  updatePetPicService,
   deletePetByIdService,
 };

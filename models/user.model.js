@@ -87,6 +87,9 @@ const userSchema = new Schema(
       default: 0,
       required: true,
     },
+    profilePic: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

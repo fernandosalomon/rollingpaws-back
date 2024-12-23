@@ -7,6 +7,7 @@ const {
   updatePetService,
   deletePetByIdService,
   getAllPetsFromUserService,
+  updatePetPicService,
 } = require("../services/pets.services");
 
 const jwt = require("jsonwebtoken");
@@ -75,6 +76,18 @@ const updatePetController = async (req, res) => {
   }
 };
 
+const updatePetPicController = async (req, res) => {
+  try {
+    const imagePet = await updatePetPicService(req.params.petID, req.file);
+    imagePet.statusCode === 200
+      ? res.status(imagePet.statusCode).json(imagePet.data)
+      : res.status(imagePet.statusCode).json(imagePet.message);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+}
+
 const deletePetByIdController = async (req, res) => {
   try {
     const deletedPet = await deletePetByIdService(req.params.petID);
@@ -93,5 +106,6 @@ module.exports = {
   getAllPetsFromUserController,
   createNewPetController,
   updatePetController,
+  updatePetPicController,
   deletePetByIdController,
 };

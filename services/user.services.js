@@ -1,6 +1,7 @@
 const UserModel = require("../models/user.model");
 const bcrypt = require(`bcrypt`);
 const jwt = require("jsonwebtoken");
+const cloudinary = require("../helpers/cloudinary.config")
 
 const getAllUsersService = async (userID) => {
   try {
@@ -229,9 +230,8 @@ const banUserService = async (userID) => {
         }
       );
       return {
-        message: `El usuario fue ${
-          !userExist.banned ? "bloqueado" : "desbloqueado"
-        } con exito`,
+        message: `El usuario fue ${!userExist.banned ? "bloqueado" : "desbloqueado"
+          } con exito`,
         statusCode: 200,
       };
     }
@@ -243,6 +243,28 @@ const banUserService = async (userID) => {
     };
   }
 };
+
+const updateUserPicService = async (userID, file) => {
+  try {
+    const user = await UserModel.findById(userID);
+    const profilePic = await cloudinary.uploader.upload(file.path)
+
+    user.profilePic = profilePic.secure_url;
+    const updatedUser = await user.save();
+
+    return {
+      data: profilePic.secure_url,
+      statusCode: 200
+    }
+
+  } catch (error) {
+    console.log(error)
+    return {
+      message: `Ocurrio un error tratando de cargar la imagen del usuario.`,
+      statusCode: 500,
+    };
+  }
+}
 
 const deleteUserByIdService = async (userID) => {
   try {
@@ -268,5 +290,6 @@ module.exports = {
   logoutUserService,
   updateUserService,
   banUserService,
+  updateUserPicService,
   deleteUserByIdService,
 };
