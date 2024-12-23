@@ -1,4 +1,4 @@
-const { contactTemplateMail } = require("../helpers/mails.template")
+const { contactTemplateMail, PlansTemplateMail } = require("../helpers/mails.template")
 const MessagesModel = require("../models/messages.model")
 
 const postNewMessageService = async (messageData) => {
@@ -7,7 +7,12 @@ const postNewMessageService = async (messageData) => {
         const postedMessage = await newMessage.save()
 
         if (postedMessage) {
-            contactTemplateMail(messageData.contactName, messageData.contactEmail);
+            if (messageData.type === "Contact") {
+                contactTemplateMail(messageData.contactName, messageData.contactEmail);
+            }
+            if (messageData.type === "Plans") {
+                PlansTemplateMail(messageData.contactName, messageData.contactEmail);
+            }
             return {
                 message: "El mensaje fue guardado con exito.",
                 statusCode: 201,

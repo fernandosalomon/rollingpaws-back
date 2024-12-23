@@ -1,6 +1,10 @@
 const { model, Schema } = require("mongoose");
 
 const messagesSchema = new Schema({
+    type: {
+        type: String,
+        enum: ["contact", "plans"],
+    },
     contactName: {
         type: String,
         required: true,
@@ -32,6 +36,10 @@ const messagesSchema = new Schema({
             "El texto no tiene el formáto correcto (Solo letras, numeros y caracteres especiales: /$-_,.())",
         ],
     },
+    selectedPlan: {
+        type: String,
+        enum: [0, 1, 2]
+    }
 }, { timestamps: true })
 
 const MessagesModel = model("Messages", messagesSchema);
