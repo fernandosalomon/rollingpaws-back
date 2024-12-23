@@ -22,7 +22,7 @@ router.get("/:userID", getUserByIdController);
 router.post("/", loginUserController);
 
 router.post("/register", createNewUserController);
-router.post("/profile-pic/:userID", multer.single("profile-pic"), updateUserPicController)
+router.post("/profile-pic/:userID", multer.single("profilePic"), updateUserPicController)
 
 router.put("/logout", logoutUserController);
 router.put("/ban-user/:userID", banUserController);

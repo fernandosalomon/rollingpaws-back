@@ -89,6 +89,7 @@ const userSchema = new Schema(
     },
     profilePic: {
       type: String,
+      default: "https://res.cloudinary.com/dqpq2d0es/image/upload/v1734977722/user-default-pic_y72gar.png"
     },
   },
   { timestamps: true }
