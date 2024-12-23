@@ -53,6 +53,7 @@ const petSchema = new Schema(
     },
     image: {
       type: String,
+      default: "https://res.cloudinary.com/dqpq2d0es/image/upload/v1734985899/default-pet-image_abs6xm.png"
     }
   },
   { timestamps: true }
