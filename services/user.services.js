@@ -1,7 +1,8 @@
 const UserModel = require("../models/user.model");
 const bcrypt = require(`bcrypt`);
 const jwt = require("jsonwebtoken");
-const cloudinary = require("../helpers/cloudinary.config")
+const cloudinary = require("../helpers/cloudinary.config");
+const { welcomeTemplateMail } = require("../helpers/mails.template");
 
 const getAllUsersService = async (userID) => {
   try {
@@ -79,6 +80,8 @@ const createNewUserService = async (body) => {
 
         try {
           const registeredUser = await newUser.save();
+          const userFullName = registeredUser.firstName + " " + registeredUser.lastName;
+          welcomeTemplateMail(userFullName, registeredUser.email);
           return {
             data: registeredUser,
             token: token,
