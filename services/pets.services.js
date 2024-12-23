@@ -64,7 +64,7 @@ const getAllPetsFromUserService = async (userID) => {
 };
 
 const createNewPetService = async (body, userID) => {
-  const { name, specie, sex, size, age, health, observations } = body;
+  const { name, specie, breed, sex, size, age, health, observations } = body;
   const owner = userID;
 
   if (!name || !specie) {
@@ -76,6 +76,7 @@ const createNewPetService = async (body, userID) => {
     const newPet = new PetModel({
       name,
       specie,
+      breed,
       sex,
       size,
       age,
