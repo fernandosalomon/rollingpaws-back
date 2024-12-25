@@ -115,31 +115,19 @@ const loginUserService = async (body) => {
     const userExist = await UserModel.findOne({ email: body.email });
     if (userExist) {
       if (bcrypt.compareSync(body.password, userExist.password)) {
-        if (!userExist.logged) {
-          const payload = {
-            id: userExist._id,
-            role: userExist.role,
-          };
-
-          const token = jwt.sign(payload, process.env.JWT_SECRET);
-
-          const isLogged = await UserModel.findOneAndUpdate(
-            { _id: userExist._id },
-            { logged: true },
-            { new: true }
-          );
-
-          return {
-            role: userExist.role,
-            token: token,
-            statusCode: 200,
-          };
-        } else {
-          return {
-            message: "El usuario ya se encuentra identificado en otra sesión",
-            statusCode: 400,
-          };
+        const payload = {
+          id: userExist._id,
+          role: userExist.role,
         }
+
+        const token = jwt.sign(payload, process.env.JWT_SECRET);
+
+        return {
+          role: userExist.role,
+          token: token,
+          statusCode: 200,
+        };
+
       } else {
         return {
           message: "Usuario y/o contraseña incorrectos. P",
