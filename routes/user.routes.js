@@ -15,9 +15,9 @@ const multer = require("../middlewares/multer")
 
 const router = Router();
 
-router.get("/", getAllUsersController);
 router.get("/self", getUserSelfDataController);
 router.get("/:userID", getUserByIdController);
+router.get("/", getAllUsersController);
 
 router.post("/", loginUserController);
 

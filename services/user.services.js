@@ -114,25 +114,32 @@ const loginUserService = async (body) => {
   try {
     const userExist = await UserModel.findOne({ email: body.email });
     if (userExist) {
-      if (bcrypt.compareSync(body.password, userExist.password)) {
-        const payload = {
-          id: userExist._id,
-          role: userExist.role,
-        }
-
-        const token = jwt.sign(payload, process.env.JWT_SECRET);
-
+      if (userExist.banned) {
         return {
-          role: userExist.role,
-          token: token,
-          statusCode: 200,
+          message: "Usuario no habilitado. Contactate con un administrador",
+          statusCode: 401,
         };
-
       } else {
-        return {
-          message: "Usuario y/o contraseña incorrectos. P",
-          statusCode: 400,
-        };
+        if (bcrypt.compareSync(body.password, userExist.password)) {
+          const payload = {
+            id: userExist._id,
+            role: userExist.role,
+          }
+
+          const token = jwt.sign(payload, process.env.JWT_SECRET);
+
+          return {
+            role: userExist.role,
+            token: token,
+            statusCode: 200,
+          };
+
+        } else {
+          return {
+            message: "Usuario y/o contraseña incorrectos. P",
+            statusCode: 400,
+          };
+        }
       }
     } else {
       return {
