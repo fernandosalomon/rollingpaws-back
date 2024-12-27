@@ -9,6 +9,9 @@ const {
   logoutUserService,
   banUserService,
   updateUserPicService,
+  changePasswordService,
+  changePasswordWithTokenService,
+  forgotPasswordService,
 } = require("../services/user.services");
 const jwt = require("jsonwebtoken");
 
@@ -139,6 +142,48 @@ const deleteUserByIdController = async (req, res) => {
   }
 };
 
+const changePasswordController = async (req, res) => {
+  try {
+    const token = req.headers.authtoken;
+
+    if (!token) {
+      res.status(401).json({ data: "Acceso denegado" })
+    } else {
+      const changePassword = await changePasswordService(token, req.body);
+      res.status(changePassword.statusCode).json(changePassword.data);
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+}
+
+const changePasswordWithTokenController = async (req, res) => {
+  try {
+    const token = req.headers.authtoken;
+
+    if (!token) {
+      res.status(401).json({ data: "Acceso denegado" })
+    } else {
+      const changePassword = await changePasswordWithTokenService(token, req.body);
+      res.status(changePassword.statusCode).json(changePassword.data);
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+}
+
+const forgotPasswordController = async (req, res) => {
+  try {
+    const forgotPassword = await forgotPasswordService(req.body.email);
+    res.status(forgotPassword.statusCode).json(forgotPassword.data);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+}
+
 module.exports = {
   getAllUsersController,
   getUserByIdController,
@@ -149,5 +194,8 @@ module.exports = {
   updateUserController,
   banUserController,
   updateUserPicController,
+  changePasswordController,
+  changePasswordWithTokenController,
+  forgotPasswordController,
   deleteUserByIdController,
 };

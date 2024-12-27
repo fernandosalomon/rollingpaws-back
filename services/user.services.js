@@ -2,7 +2,7 @@ const UserModel = require("../models/user.model");
 const bcrypt = require(`bcrypt`);
 const jwt = require("jsonwebtoken");
 const cloudinary = require("../helpers/cloudinary.config");
-const { welcomeTemplateMail } = require("../helpers/mails.template");
+const { welcomeTemplateMail, forgotPasswordTemplateMail } = require("../helpers/mails.template");
 
 const getAllUsersService = async (userID) => {
   try {
@@ -264,6 +264,127 @@ const updateUserPicService = async (userID, file) => {
   }
 }
 
+const changePasswordService = async (token, body) => {
+  const { id, ...rest } = jwt.verify(token, process.env.JWT_SECRET);
+
+  try {
+    const userData = await UserModel.findById(id);
+    if (bcrypt.compareSync(body.oldPassword, userData.password)) {
+      const isPasswordStrong = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(body.newPassword);
+
+      if (isPasswordStrong) {
+        try {
+          const salt = bcrypt.genSaltSync(10);
+          const password = bcrypt.hashSync(body.newPassword, salt);
+          const changePassword = await UserModel.findByIdAndUpdate(id, { password: password });
+          if (changePassword) {
+            return {
+              data: "La contraseña se modificó con exito.",
+              statusCode: 200,
+            }
+          } else {
+            return {
+              data: "Hubo un error al tratar de cambiar la contraseña.",
+              statusCode: 500,
+            }
+          }
+        } catch (error) {
+          console.log(error)
+          return {
+            data: "Hubo un error tratando de cambiar la contraseña.",
+            statusCode: 500,
+          }
+        }
+      } else {
+        return {
+          data: "La contraseña debe contener al menos 8 caracteres, una mayuscula, una minuscula, un número y un caracter especial (@$!%*?&)",
+          statusCode: 400,
+        }
+      }
+    } else {
+      return {
+        data: "La contraseña ingresada es incorrecta",
+        statusCode: 400,
+      }
+    }
+  } catch (error) {
+    return {
+      data: "Error obteniendo la información del usuario de la base de datos",
+      statusCode: 500,
+    }
+  }
+}
+
+const changePasswordWithTokenService = async (token, body) => {
+  const { id, ...rest } = jwt.verify(token, process.env.JWT_SECRET);
+
+  try {
+    const isPasswordStrong = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(body.newPassword);
+
+    if (isPasswordStrong) {
+      try {
+        const salt = bcrypt.genSaltSync(10);
+        const password = bcrypt.hashSync(body.newPassword, salt);
+        const changePassword = await UserModel.findByIdAndUpdate(id, { password: password });
+        if (changePassword) {
+          return {
+            data: "La contraseña se modificó con exito.",
+            statusCode: 200,
+          }
+        } else {
+          return {
+            data: "Hubo un error al tratar de cambiar la contraseña.",
+            statusCode: 500,
+          }
+        }
+      } catch (error) {
+        console.log(error)
+        return {
+          data: "Hubo un error tratando de cambiar la contraseña.",
+          statusCode: 500,
+        }
+      }
+    } else {
+      return {
+        data: "La contraseña debe contener al menos 8 caracteres, una mayuscula, una minuscula, un número y un caracter especial (@$!%*?&)",
+        statusCode: 400,
+      }
+    }
+  } catch (error) {
+    return {
+      data: "Error obteniendo la información del usuario de la base de datos",
+      statusCode: 500,
+    }
+  }
+}
+
+const forgotPasswordService = async (email) => {
+  try {
+    const userExist = await UserModel.findOne({ email: email });
+
+    if (userExist) {
+      const payload = {
+        id: userExist._id,
+      };
+
+      const token = jwt.sign(payload, process.env.JWT_SECRET);
+
+      const resetPasswordEmail = await forgotPasswordTemplateMail(userExist.email, userExist.email, token);
+
+
+      return {
+        data: "Se ha mandado un mail a la casilla de correo del usuario",
+        statusCode: 200,
+      }
+    }
+  } catch (error) {
+    return {
+      data: "Error obteniendo la información del usuario de la base de datos",
+      statusCode: 500,
+    }
+  }
+}
+
 const deleteUserByIdService = async (userID) => {
   try {
     const deletedUser = await UserModel.findByIdAndDelete(userID);
@@ -289,5 +410,8 @@ module.exports = {
   updateUserService,
   banUserService,
   updateUserPicService,
+  changePasswordService,
+  changePasswordWithTokenService,
+  forgotPasswordService,
   deleteUserByIdService,
 };

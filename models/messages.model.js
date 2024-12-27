@@ -39,6 +39,11 @@ const messagesSchema = new Schema({
     selectedPlan: {
         type: String,
         enum: [0, 1, 2]
+    },
+    read: {
+        type: Boolean,
+        required: true,
+        default: false,
     }
 }, { timestamps: true })
 

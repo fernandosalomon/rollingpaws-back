@@ -10,6 +10,9 @@ const {
   banUserController,
   getUserSelfDataController,
   updateUserPicController,
+  changePasswordController,
+  changePasswordWithTokenController,
+  forgotPasswordController,
 } = require("../controllers/user.controllers");
 const multer = require("../middlewares/multer")
 
@@ -24,6 +27,9 @@ router.post("/", loginUserController);
 router.post("/register", createNewUserController);
 router.post("/profile-pic/:userID", multer.single("profilePic"), updateUserPicController)
 
+router.put("/change-password-token", changePasswordWithTokenController)
+router.put("/change-password", changePasswordController)
+router.put("/forgot-password", forgotPasswordController)
 router.put("/logout", logoutUserController);
 router.put("/ban-user/:userID", banUserController);
 router.put("/:userID", updateUserController);

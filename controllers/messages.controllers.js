@@ -1,5 +1,16 @@
 const MessagesModel = require("../models/messages.model");
-const { postNewMessageService } = require("../services/messages.services");
+const { getAllMessagesService, postNewMessageService, setReadedMessageService } = require("../services/messages.services");
+
+
+const getAllMessagesController = async (req, res) => {
+    try {
+        const messages = await getAllMessagesService();
+        res.status(messages.statusCode).json(messages.data);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json(error);
+    }
+}
 
 const postNewMessageController = async (req, res) => {
     try {
@@ -11,4 +22,14 @@ const postNewMessageController = async (req, res) => {
     }
 }
 
-module.exports = { postNewMessageController };
+const setReadedMessageController = async (req, res) => {
+    try {
+        const setReadedMessage = await setReadedMessageService(req.params.messageID);
+        res.status(setReadedMessage.statusCode).json(setReadedMessage.message);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json(error);
+    }
+}
+
+module.exports = { getAllMessagesController, postNewMessageController, setReadedMessageController };
