@@ -47,6 +47,11 @@ const appointmentsSchema = new Schema(
         "El texto no tiene el formáto correcto (Solo letras, numeros y caracteres especiales: /$-_,.())",
       ],
     },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    }
   },
   { timestamps: true }
 );

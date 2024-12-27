@@ -1,8 +1,8 @@
 const { Router } = require("express");
 const {
   getAllUsersController,
-  createNewUserController,
   getUserByIdController,
+  createNewUserController,
   updateUserController,
   deleteUserByIdController,
   loginUserController,

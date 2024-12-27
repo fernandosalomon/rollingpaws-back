@@ -12,6 +12,7 @@ const {
   changePasswordService,
   changePasswordWithTokenService,
   forgotPasswordService,
+  getUserAppointmentsService,
 } = require("../services/user.services");
 const jwt = require("jsonwebtoken");
 

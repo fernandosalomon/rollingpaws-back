@@ -3,11 +3,13 @@ const AppointmentsModel = require("./appointments.model");
 
 const doctorSchema = new Schema(
   {
-    user: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
+    name: {
+      type: String,
+      match: [
+        /^[a-zA-ZáéíóúÁÉÍÓÚñÑ][a-zA-ZáéíóúÁÉÍÓÚñÑ' ]*$/,
+        "Formato de nombre incorrecto.",
+      ],
       required: true,
-      unique: true,
     },
     workingDays: {
       type: [

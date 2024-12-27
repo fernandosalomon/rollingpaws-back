@@ -1,10 +1,12 @@
 const AppointmentsModel = require("../models/appointments.model");
+const jwt = require("jsonwebtoken");
 const {
   getAllAppointmentsService,
   createAppointmentService,
   getAppointmentsByIdService,
   updateAppointmentService,
   deleteAppointmentService,
+  getUserAppointmentsService,
 } = require("../services/appointments.services");
 
 const getAllAppointmentsController = async (req, res) => {
@@ -32,14 +34,33 @@ const getAppointmentsByIdController = async (req, res) => {
   }
 };
 
-const createAppointmentController = async (req, res) => {
+const getUserAppointmentsController = async (req, res) => {
+  const token = req.headers.authtoken;
+  const userID = jwt.verify(token, process.env.JWT_SECRET).id;
+
   try {
-    const createdAppointment = await createAppointmentService(req.body);
+    const appointments = await getUserAppointmentsService(userID);
+    appointments.statusCode === 200
+      ? res.status(appointments.statusCode).json(appointments.data)
+      : res.status(appointments.statusCode).json(appointments.message);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+};
+
+const createAppointmentController = async (req, res) => {
+
+  const token = req.headers.authtoken;
+  const userID = jwt.verify(token, process.env.JWT_SECRET).id;
+
+  try {
+    const createdAppointment = await createAppointmentService(req.body, userID);
     createdAppointment.statusCode === 201
       ? res.status(createdAppointment.statusCode).json(createdAppointment.data)
       : res
-          .status(createdAppointment.statusCode)
-          .json(createdAppointment.message);
+        .status(createdAppointment.statusCode)
+        .json(createdAppointment.message);
   } catch (error) {
     console.log(error);
     res.status(500).json(error);
@@ -55,8 +76,8 @@ const updateAppointmentController = async (req, res) => {
     updatedAppointment.statusCode === 200
       ? res.status(updatedAppointment.statusCode).json(updatedAppointment.data)
       : res
-          .status(updatedAppointment.statusCode)
-          .json(updatedAppointment.message);
+        .status(updatedAppointment.statusCode)
+        .json(updatedAppointment.message);
   } catch (error) {
     console.log(error);
     res.status(500).json(error);
@@ -71,8 +92,8 @@ const deleteAppointmentController = async (req, res) => {
     deletedAppointment.statusCode === 200
       ? res.status(deletedAppointment.statusCode).json(deletedAppointment.data)
       : res
-          .status(deletedAppointment.statusCode)
-          .json(deletedAppointment.message);
+        .status(deletedAppointment.statusCode)
+        .json(deletedAppointment.message);
   } catch (error) {
     console.log(error);
     res.status(500).json(error);
@@ -82,6 +103,7 @@ const deleteAppointmentController = async (req, res) => {
 module.exports = {
   getAllAppointmentsController,
   getAppointmentsByIdController,
+  getUserAppointmentsController,
   createAppointmentController,
   updateAppointmentController,
   deleteAppointmentController,

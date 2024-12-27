@@ -3,7 +3,7 @@ const DoctorModel = require("../models/doctor.model");
 
 const getAllDoctorsService = async () => {
   try {
-    const doctors = await DoctorModel.find().populate("user");
+    const doctors = await DoctorModel.find();
     return {
       data: doctors,
       statusCode: 200,
@@ -22,7 +22,7 @@ const getDoctorByIdService = async (doctorID) => {
   try {
     const doctor = await DoctorModel.findOne({
       _id: doctorID,
-    }).populate("user");
+    });
 
     if (!doctor) {
       return {
@@ -48,9 +48,8 @@ const getDoctorFreeHoursService = async (doctorID, selectedDate) => {
   const parseTime = (value) => {
     const hour = Math.floor(Number(value) / 60);
     const minutes = Number(value) - hour * 60;
-    return `${hour < 10 ? "0" : ""}${hour}:${
-      minutes < 10 ? "0" : ""
-    }${minutes}`;
+    return `${hour < 10 ? "0" : ""}${hour}:${minutes < 10 ? "0" : ""
+      }${minutes}`;
   };
 
   try {
@@ -71,11 +70,11 @@ const getDoctorFreeHoursService = async (doctorID, selectedDate) => {
     vetAppointments.map((appointment) => {
       if (
         new Date(appointment.startDate).getFullYear() ===
-          new Date(selectedDate).getFullYear() &&
+        new Date(selectedDate).getFullYear() &&
         new Date(appointment.startDate).getMonth() ===
-          new Date(selectedDate).getMonth() &&
+        new Date(selectedDate).getMonth() &&
         new Date(appointment.startDate).getDate() ===
-          new Date(selectedDate).getDate()
+        new Date(selectedDate).getDate()
       ) {
         const appointmentStart =
           new Date(appointment.startDate).getUTCHours() * 60 +
