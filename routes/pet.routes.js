@@ -8,19 +8,20 @@ const {
   getAllPetsFromUserController,
   updatePetPicController,
 } = require("../controllers/pet.controllers");
-const multer = require("../middlewares/multer")
+const multer = require("../middlewares/multer");
+const auth = require("../middlewares/auth");
 
 const router = Router();
 
-router.get("/user", getAllPetsFromUserController);
-router.get("/:petID", getPetByIdController);
-router.get("/", getAllPetsController);
+router.get("/user", auth("user"), getAllPetsFromUserController);
+router.get("/:petID", auth("admin"), getPetByIdController);
+router.get("/", auth("admin"), getAllPetsController);
 
-router.post("/", createNewPetController);
-router.post("/image/:petID", multer.single("image"), updatePetPicController)
+router.post("/", auth("user"), createNewPetController);
+router.post("/image/:petID", auth("user"), multer.single("image"), updatePetPicController)
 
-router.put("/:petID", updatePetController);
+router.put("/:petID", auth("user"), updatePetController);
 
-router.delete("/:petID", deletePetByIdController);
+router.delete("/:petID", auth("user"), deletePetByIdController);
 
 module.exports = router;

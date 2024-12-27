@@ -14,26 +14,27 @@ const {
   changePasswordWithTokenController,
   forgotPasswordController,
 } = require("../controllers/user.controllers");
-const multer = require("../middlewares/multer")
+const multer = require("../middlewares/multer");
+const auth = require("../middlewares/auth");
 
 const router = Router();
 
-router.get("/self", getUserSelfDataController);
-router.get("/:userID", getUserByIdController);
-router.get("/", getAllUsersController);
+router.get("/self", auth("user"), getUserSelfDataController);
+router.get("/:userID", auth("admin"), getUserByIdController);
+router.get("/", auth("admin"), getAllUsersController);
 
 router.post("/", loginUserController);
 
 router.post("/register", createNewUserController);
-router.post("/profile-pic/:userID", multer.single("profilePic"), updateUserPicController)
+router.post("/profile-pic/:userID", auth("user"), multer.single("profilePic"), updateUserPicController)
 
 router.put("/change-password-token", changePasswordWithTokenController)
-router.put("/change-password", changePasswordController)
+router.put("/change-password", auth("user"), changePasswordController)
 router.put("/forgot-password", forgotPasswordController)
-router.put("/logout", logoutUserController);
-router.put("/ban-user/:userID", banUserController);
-router.put("/:userID", updateUserController);
+router.put("/logout", auth("user"), logoutUserController);
+router.put("/ban-user/:userID", auth("admin"), banUserController);
+router.put("/:userID", auth("user"), updateUserController);
 
-router.delete("/:userID", deleteUserByIdController);
+router.delete("/:userID", auth("admin"), deleteUserByIdController);
 
 module.exports = router;

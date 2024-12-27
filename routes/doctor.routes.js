@@ -7,20 +7,21 @@ const {
   deleteDoctorController,
   getDoctorFreeHoursController,
 } = require("../controllers/doctor.controllers");
+const auth = require("../middlewares/auth");
 
 const router = Router();
 
-router.get("/", getAllDoctorsController);
-router.get("/:doctorID", getDoctorByIdController);
+router.get("/", auth("user"), getAllDoctorsController);
+router.get("/:doctorID", auth("user"), getDoctorByIdController);
 router.get(
-  "/clinic-hours/:doctorID&:selectedDate",
+  "/clinic-hours/:doctorID&:selectedDate", auth("user"),
   getDoctorFreeHoursController
 );
 
-router.post("/", createDoctorController);
+router.post("/", auth("admin"), createDoctorController);
 
-router.put("/:doctorID", updateDoctorController);
+router.put("/:doctorID", auth("admin"), updateDoctorController);
 
-router.delete("/:doctorID", deleteDoctorController);
+router.delete("/:doctorID", auth("admin"), deleteDoctorController);
 
 module.exports = router;

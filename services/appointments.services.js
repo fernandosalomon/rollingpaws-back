@@ -6,10 +6,7 @@ const {
 
 const getAllAppointmentsService = async () => {
   try {
-    const appointments = await AppointmentsModel.find()
-      .populate("pet")
-      .populate({ path: "doctor", populate: { path: "user", model: "User" } });
-
+    const appointments = await AppointmentsModel.find().populate("pet")
     return {
       data: appointments,
       statusCode: 200,
