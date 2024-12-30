@@ -136,14 +136,14 @@ const loginUserService = async (body) => {
 
         } else {
           return {
-            message: "Usuario y/o contraseña incorrectos. P",
+            message: "Usuario y/o contraseña incorrectos.",
             statusCode: 400,
           };
         }
       }
     } else {
       return {
-        message: "Usuario y/o contraseña incorrectos. U",
+        message: "Usuario y/o contraseña incorrectos.",
         statusCode: 400,
       };
     }
