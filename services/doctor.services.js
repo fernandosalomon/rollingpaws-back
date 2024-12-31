@@ -53,7 +53,7 @@ const getDoctorFreeHoursService = async (doctorID, selectedDate) => {
   };
 
   try {
-    const doctorData = await DoctorModel.findById(doctorID);
+    const doctorData = await DoctorModel.findOne({ _id: doctorID });
     const startHour =
       Number(doctorData.startWorkingHour.split(":")[0]) * 60 +
       Number(doctorData.startWorkingHour.split(":")[1]);
@@ -110,6 +110,7 @@ const getDoctorFreeHoursService = async (doctorID, selectedDate) => {
         statusCode: 200,
       };
     } else {
+      console.log((doctorData.workingDays.find((value) => value === dayDict[selectedDate.getDay()])))
       return {
         data: [],
         statusCode: 200,
