@@ -1,65 +1,195 @@
-# RollingPaws - Rest API
-
-## Este proyecto fue creado como parte del trabajo final presentado en el curso de desarrollo web fullstack de RollingCode School (https://web.rollingcodeschool.com/).
 
 ### La rest API se encuentra subida a: https://rollingpaws-back.vercel.app/
 
-# Como usarlo
+# RollingPaws - Rest API
 
-## Esta REST API se diseñó para gestionar la administración de pacientes, los servicios ofrecidos y la reserva de turnos en una veterinaria. Los usuarios pueden registrarse e iniciar sesión para cargar, modificar y eliminar información de sus mascotas, así como gestionar sus turnos en la veterinaria.
+Este repositorio contiene el backend para RollingPaw, una REST API desarrollada con Node.js, Express, y MongoDB. La API gestiona las funcionalidades relacionadas con la administración de pacientes, turnos, y servicios de una veterinaria.
 
-# Roles
+Este proyecto fue creado como parte del trabajo final presentado en el curso de desarrollo web fullstack de RollingCode School (https://web.rollingcodeschool.com/).
 
-## La API maneja dos roles para los usuarios: "user" y "admin". En los casos en donde se necesite proteger las rutas, un middleware pide un token generado por la herramienta Jason Web Token (https://jwt.io/). 
+Desarrollador: Fernando F. Salomón (https://github.com/fernandosalomon).
 
-# Base de datos
+## Características
 
-## La información se guarda en una base de datos de MongoDB. La API opera con 6 colecciones diferentes:
+- **CRUD de Pacientes:** Gestión completa de los datos de los pacientes y sus dueños.
+- **CRUD de Turnos:** Creación, consulta, actualización y eliminación de turnos asignados a veterinarios.
+- **CRUD de Servicios:** Administración de los servicios ofrecidos por la veterinaria.
+- **Autenticación Segura:** Login para administrador con contraseñas encriptadas mediante bcrypt.
+- **Protección de rutas:** Implementación de dos roles de usuario con privilegios diferenciados. Los accesos y permisos se controlan mediante tokens generados con JSON Web Token (JWT), asegurando que las rutas restringidas sean accesibles solo para usuarios autorizados.
+- **Notificaciones:** Envío automático de correos electrónicos usando NodeMailer.
 
-1. users
-2. pets
-3. appointments
-4. doctors
-5. services
-6. messages
+## Requerimientos
 
-# USUARIOS
+- **Node.js** (versión 14 o superior).
+- **MongoDB** (local o en la nube).
+- Librerías utilizadas:
+  - `express`
+  - `mongoose`
+  - `bcryptjs`
+  - `cloudinary`
+  - `jsonwebtoken`
+  - `nodemailer`
 
-## GET
+## Configuración e Instalación
 
-* /users: Permite al usuario con rol de administrador obtener todos los usuarios registrados en la base de datos.
-* /users/:userID: Permite al usuario con rol de administrador obtener la información del usuario con el userID en la base de datos.
-* /users/self: Permite al usuario con rol de usuario obtener su información de la base de datos.
+### 1. Clonar el repositorio
+```bash
+git clone https://github.com/fernandosalomon/rollingpaws-back
+cd rollingpaws-back
+```
 
-## POST
+### 2. Instalar dependencias
+```bash
+npm install
+```
 
-* /users: Permite que un usuario ingrese al sistema proporcionando un email y contraseña validos para un usuario registrado. Devuelve token y rol de usuario
+### 3. Configurar variables de entorno
+Crea un archivo `.env` en el directorio raíz con el siguiente contenido:
 
-## PUT
+```env
+PORT=3001
+MONGO_CONNECT=<URL_DE_TU_BASE_DE_DATOS>
+JWT_SECRET=<CLAVE_SECRETA>
+GMAIL_USER=<USUARIO_EMAIL>
+GMAIL_PASS=<CONTRASEÑA_EMAIL>
+CLOUD_NAME=<<CLOUDINARY_CLOUD_NAME>
+CLOUD_API_KEY=<CLOUDINARY_API_KEY>
+CLOUD_API_SECRET=<CLOUDINARY_API_SECRET>
+```
 
-* /register: Permite registrar un usuario nuevo al sistema. Se deben proporcionar los siguientes datos obligatorios para guardar el usuario en la base de datos:
+### 4. Ejecutar el servidor
+```bash
+npm start
+```
 
-* firstName: Puede contener caracteres del alfabeto español (ñ y acentos), una apostrofe ('), un mínimo de 2 caracteres y hasta 40 caracteres.
-* lastName: Puede contener caracteres del alfabeto español (ñ y acentos), una apostrofe ('), un mínimo de 2 caracteres y hasta 40 caracteres.
-* email: Formato de email válido (ej. anon@anon.com)
-* password: La contraseña debe contener al menos 8 caracteres, una mayuscula, una minuscula y un caracter especial (@$!%*?&).
+El servidor estará disponible en `http://localhost:3001` por defecto.
 
-* /profile-pic/:userID : Permite agregar una foto de perfil al usuario con userID. El archivo debe ser de formato .jpg o .png y se sube a un servicio para guardar imagenes en la nube (https://cloudinary.com/home).
+### 5. Publicación del proyecto
+- **Frontend:** https://rollingpaws-front.vercel.app/
+- **Backend:** https://rollingpaws-back.vercel.app/ 
 
-## POST
+## Endpoints
 
-* /:userID: Permite al usuario (user o admin) modificar su información.
+### Usuarios
+- **GET** `/api/user` - Obtener todos los usuario.
+- **GET** `/api/user/:id` - Obtener información de un usuario por ID.
+- **GET** `/api/user/self` - Obtener usuario autenticado.
+- **POST** `/api/user/` - Iniciar sesión
+- **POST** `/api/user/register` - Registrar nuevo usuario
+- **PUT** `/api/user/:id` - Actualizar un usuario.
+- **PUT** `/api/user/ban-user/:id` - Deshabilitar un usuario por ID.
+- **PUT** `/api/user/change-password` - Cambiar contraseña de un usuario.
+- **PUT** `/api/user/logout` - Cerrar sesión de un usuario.
+- **PUT** `/api/user/profile-pic/:id` - Cambiar imagen de perfil de un usuario.
+- **DELETE** `/api/user/:id` - Eliminar un usuario.
 
-* /change-password-token: Permite a cualquiera que reciba el email de recuperación de contraseña con un token válido, el cual se envia por header, cambiar su contraseña.
+### Mascotas
+- **GET** `/api/pet` - Obtener todos las mascotas.
+- **GET** `/api/pet/:id` - Obtener información de una mascotas por ID.
+- **GET** `/api/pet/user` - Obtener todas laa mascotas del usuario autenticado.
+- **POST** `/api/pet` - Crear una nueva mascotas.
+- **PUT** `/api/pet/:id` - Actualizar una mascota por ID.
+- **PUT** `/api/pet/image/:id` - Actualizar imagen de una mascota por ID.
+- **DELETE** `/api/pet/:id` - Eliminar una mascotas.
 
-* /change-password: Permite al usuario cambiar su contraseña
+### Turnos
+- **GET** `/api/appointments` - Obtener todos los turnos.
+- **GET** `/api/appointments/:id` - Obtener información de un turno por ID.
+- **GET** `/api/appointments/user/` - Obtener todos los turnos del usuario autenticado.
+- **POST** `/api/appointments` - Crear un nuevo turno.
+- **PUT** `/api/appointments/:id` - Actualizar un turno.
+- **DELETE** `/api/appointments/:id` - Eliminar un turno.
 
-* /forgot-password: Si el email proporcionado corresponde a un usuario registrado, envía un email, usando el servicio de nodemailer (https://www.nodemailer.com/), con un token para poder restablecer la contraseña.
+### Servicios
+- **GET** `/api/servicios` - Obtener todos los servicios.
+- **GET** `/api/servicios/:id` - Obtener información de un servicio por ID.
+- **POST** `/api/servicios` - Crear un nuevo servicio.
+- **PUT** `/api/servicios/:id` - Actualizar un servicio.
+- **PUT** `/api/servicios/image/:id` - Actualizar imagen de un servicio por ID.
+- **DELETE** `/api/servicios/:id` - Eliminar un servicio.
 
-* /logout: Permite al usuario terminar la sesión.
+### Mensajes
+- **GET** `/api/messages` - Obtener todos los mensajes.
+- **POST** `/api/messages` - Crear un nuevo mensaje.
+- **PUT** `/api/messages/:id` - Marcar un mensaje como leido.
 
-* /ban-user/:userID: Permite al usuario con rol de administrador, deshabilitar al usuario con el userID proporcionado.
+### Veterinarios
+- **GET** `/api/doctor` - Obtener todos los veterinarios.
+- **GET** `/api/doctor/:id` - Obtener información de un veterinario por ID.
+- **GET** `/api/doctor/clinic-hours/:id&:date` - Obtener los horarios libres del veterinario por ID en una fecha determinada.
+- **POST** `/api/doctor` - Crear un nuevo veterinario.
+- **PUT** `/api/doctor/:id` - Actualizar un veterinario por ID.
+- **DELETE** `/api/doctor/:id` - Eliminar un veterinario.
 
-# DELETE
+### Recuperación de contraseña
+- **PUT** `/api/user/forgot-password` - Enviar mail de cambio de contraseña.
+- **PUT** `/api/user/change-password-token` - Cambiar contraseña utilizando el token enviado al email.
 
-* /:userID: Permite al usuario con rol de administrador eliminar al usuario con userID de la base de datos.
+## Estructura del Proyecto
+
+```
+rollingvet-backend/
+├── controllers/
+│   ├── appointments.controller.js
+│   ├── doctor.controller.js
+│   ├── messages.controller.js
+│   ├── pet.controller.js
+│   ├── services.controller.js
+│   └── user.controller.js
+├── db/
+│   └── db.config.js
+├── helpers/
+│   ├── cloudinary.config.js
+│   ├── mail.template.js
+│   └── nodemailer.config.js
+├── middlewares/
+│   ├── auth.js
+│   └── multer.js
+├── models/
+│   ├── appointments.model.js
+│   ├── doctor.model.js
+│   ├── messages.model.js
+│   ├── pet.model.js
+│   ├── services.model.js
+│   └── user.model.js
+├── routes/
+│   ├── appointments.routes.js
+│   ├── doctor.routes.js
+│   ├── messages.routes.js
+│   ├── pet.routes.js
+│   ├── services.routes.js
+│   └── user.routes.js
+├── server/
+│   └── server.config.js
+├── utils/
+│   ├── appointments.services.js
+│   ├── doctor.services.js
+│   ├── messages.services.js
+│   ├── pet.services.js
+│   ├── services.services.js
+│   └── user.services.js
+├── index.js
+├── package.json
+└── README.md
+```
+
+## Contribuir
+
+1. Haz un fork del repositorio.
+2. Crea una rama para tu funcionalidad:
+    ```bash
+    git checkout -b feature/nueva-funcionalidad
+    ```
+3. Realiza tus cambios y haz commit:
+    ```bash
+    git commit -m "Agrega nueva funcionalidad"
+    ```
+4. Envía los cambios a tu repositorio remoto:
+    ```bash
+    git push origin feature/nueva-funcionalidad
+    ```
+5. Crea un Pull Request en el repositorio principal.
+
+## Licencia
+
+Este proyecto está bajo la Licencia MIT.
