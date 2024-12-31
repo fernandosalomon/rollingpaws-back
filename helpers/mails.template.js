@@ -175,7 +175,7 @@ const forgotPasswordTemplateMail = async (username, userEmail, token) => {
 
             <div style="width: 100%; display: flex; justify-content: center; align-items: center; margin-bottom: 16px;">
                 <a style="margin: 0 auto; background-color: #F37E3B; border: 0; border-radius: 7px; padding: 10px 16px; height: 24px; font-size: 16px; font-weight: 600; text-decoration: none; cursor: pointer; color: #000;"
-                    href="http://localhost:5173/forgot-password/${token}">Recuperar Contraseña</a>
+                    href="http://localhost:5173/recuperar-contraseña/${token}">Recuperar Contraseña</a>
             </div>
 
             <p style="text-align: justify; padding: 0 16px">Si ignoras este mensaje, tu contraseña no cambiará. Si tú no solicitaste este cambio de contraseña, envíanos un email a <a href="mailto:support@rollingpaws.com">support@rollingpaws.com</a></p>
