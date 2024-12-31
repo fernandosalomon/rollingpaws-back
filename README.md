@@ -2,6 +2,8 @@
 
 ## Este proyecto fue creado como parte del trabajo final presentado en el curso de desarrollo web fullstack de RollingCode School (https://web.rollingcodeschool.com/).
 
+### La rest API se encuentra subida a: https://rollingpaws-back.vercel.app/
+
 # Como usarlo
 
 ## Esta REST API se diseñó para gestionar la administración de pacientes, los servicios ofrecidos y la reserva de turnos en una veterinaria. Los usuarios pueden registrarse e iniciar sesión para cargar, modificar y eliminar información de sus mascotas, así como gestionar sus turnos en la veterinaria.

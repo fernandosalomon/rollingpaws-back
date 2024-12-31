@@ -32,7 +32,7 @@ router.put("/change-password-token", changePasswordWithTokenController)
 router.put("/change-password", auth("user"), changePasswordController)
 router.put("/forgot-password", forgotPasswordController)
 router.put("/logout", auth("user"), logoutUserController);
-router.put("/ban-user/:userID", auth("admin"), banUserController);
+router.put("/ban-user/:userID", banUserController);
 router.put("/:userID", auth("user"), updateUserController);
 
 router.delete("/:userID", auth("admin"), deleteUserByIdController);
