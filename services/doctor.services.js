@@ -61,43 +61,62 @@ const getDoctorFreeHoursService = async (doctorID, selectedDate) => {
       Number(doctorData.endWorkingHour.split(":")[0]) * 60 +
       Number(doctorData.endWorkingHour.split(":")[1]);
 
-    for (let hour = startHour; hour < endHour; hour = hour + timeJump) {
-      freeHourList.push(hour);
+    const dayDict = {
+      0: "Dom",
+      1: "Lun",
+      2: "Mar",
+      3: "Mie",
+      4: "Jue",
+      5: "Vie",
+      6: "Sab",
     }
 
-    const vetAppointments = await AppointmentsModel.find({ doctor: doctorID });
-
-    vetAppointments.map((appointment) => {
-      if (
-        new Date(appointment.startDate).getFullYear() ===
-        new Date(selectedDate).getFullYear() &&
-        new Date(appointment.startDate).getMonth() ===
-        new Date(selectedDate).getMonth() &&
-        new Date(appointment.startDate).getDate() ===
-        new Date(selectedDate).getDate()
-      ) {
-        const appointmentStart =
-          new Date(appointment.startDate).getUTCHours() * 60 +
-          new Date(appointment.startDate).getMinutes();
-
-        const appointmentEnd =
-          new Date(appointment.endDate).getUTCHours() * 60 +
-          new Date(appointment.endDate).getMinutes();
-
-        const tempArray = freeHourList.filter(
-          (hour) => !(hour >= appointmentStart && hour < appointmentEnd)
-        );
-
-        freeHourList = [...tempArray];
+    if (doctorData.workingDays.find((value) => value === dayDict[selectedDate.getDay()]).length > 0) {
+      for (let hour = startHour; hour < endHour; hour = hour + timeJump) {
+        freeHourList.push(hour);
       }
-    });
 
-    freeHourList = freeHourList.map((hour) => parseTime(hour));
+      const vetAppointments = await AppointmentsModel.find({ doctor: doctorID });
 
-    return {
-      data: freeHourList,
-      statusCode: 200,
-    };
+      vetAppointments.map((appointment) => {
+        if (
+          new Date(appointment.startDate).getFullYear() ===
+          new Date(selectedDate).getFullYear() &&
+          new Date(appointment.startDate).getMonth() ===
+          new Date(selectedDate).getMonth() &&
+          new Date(appointment.startDate).getDate() ===
+          new Date(selectedDate).getDate()
+        ) {
+          const appointmentStart =
+            new Date(appointment.startDate).getUTCHours() * 60 +
+            new Date(appointment.startDate).getMinutes();
+
+          const appointmentEnd =
+            new Date(appointment.endDate).getUTCHours() * 60 +
+            new Date(appointment.endDate).getMinutes();
+
+          const tempArray = freeHourList.filter(
+            (hour) => !(hour >= appointmentStart && hour < appointmentEnd)
+          );
+
+          freeHourList = [...tempArray];
+        }
+      });
+
+      freeHourList = freeHourList.map((hour) => parseTime(hour));
+
+      return {
+        data: freeHourList,
+        statusCode: 200,
+      };
+    } else {
+      return {
+        data: [],
+        statusCode: 200,
+      }
+    }
+
+
   } catch (error) {
     console.log(error);
     return {
