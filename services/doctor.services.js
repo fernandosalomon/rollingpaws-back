@@ -54,7 +54,6 @@ const getDoctorFreeHoursService = async (doctorID, selectedDate) => {
 
   try {
     const doctorData = await DoctorModel.findOne({ _id: doctorID });
-    console.log(doctorData);
     const startHour =
       Number(doctorData.startWorkingHour.split(":")[0]) * 60 +
       Number(doctorData.startWorkingHour.split(":")[1]);
@@ -74,7 +73,7 @@ const getDoctorFreeHoursService = async (doctorID, selectedDate) => {
 
     console.log((doctorData.workingDays.find((value) => value === dayDict[selectedDate.getDay()])))
 
-    if (doctorData.workingDays.find((value) => value === dayDict[selectedDate.getDay()]).length > 0) {
+    if (doctorData.workingDays.find((value) => value === dayDict[selectedDate.getDay()])) {
       for (let hour = startHour; hour < endHour; hour = hour + timeJump) {
         freeHourList.push(hour);
       }
