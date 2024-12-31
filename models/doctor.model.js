@@ -18,6 +18,7 @@ const doctorSchema = new Schema(
           enum: ["Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom"],
         },
       ],
+      required: true,
     },
     startWorkingHour: {
       type: String,
@@ -38,6 +39,7 @@ const doctorSchema = new Schema(
     },
     description: {
       type: String,
+      required: true,
       max: {
         value: 200,
         message: "Máximo permitido: 200 caracteres",

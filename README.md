@@ -1,6 +1,4 @@
 
-### La rest API se encuentra subida a: https://rollingpaws-back.vercel.app/
-
 # RollingPaws - Rest API
 
 Este repositorio contiene el backend para RollingPaw, una REST API desarrollada con Node.js, Express, y MongoDB. La API gestiona las funcionalidades relacionadas con la administración de pacientes, turnos, y servicios de una veterinaria.
@@ -14,6 +12,8 @@ Desarrollador: Fernando F. Salomón (https://github.com/fernandosalomon).
 - **CRUD de Pacientes:** Gestión completa de los datos de los pacientes y sus dueños.
 - **CRUD de Turnos:** Creación, consulta, actualización y eliminación de turnos asignados a veterinarios.
 - **CRUD de Servicios:** Administración de los servicios ofrecidos por la veterinaria.
+- **CRUD de Veterinarios:** Creación, consulta, actualización y eliminación de veterinarios.
+- **CRUD de Mensajes:** Creacion y consulta de mensajes para los administradores.
 - **Autenticación Segura:** Login para administrador con contraseñas encriptadas mediante bcrypt.
 - **Protección de rutas:** Implementación de dos roles de usuario con privilegios diferenciados. Los accesos y permisos se controlan mediante tokens generados con JSON Web Token (JWT), asegurando que las rutas restringidas sean accesibles solo para usuarios autorizados.
 - **Notificaciones:** Envío automático de correos electrónicos usando NodeMailer.
@@ -124,6 +124,65 @@ El servidor estará disponible en `http://localhost:3001` por defecto.
 ### Recuperación de contraseña
 - **PUT** `/api/user/forgot-password` - Enviar mail de cambio de contraseña.
 - **PUT** `/api/user/change-password-token` - Cambiar contraseña utilizando el token enviado al email.
+
+## Base de datos - Modelo
+
+### Usuarios
+- **firstName:** requerido: **SI**/ tipo: **String**
+- **lastName:** requerido: **SI**/ tipo: **String**
+- **email:** requerido: **SI**/ tipo: **String**
+- **password:** requerido: **SI**/ tipo: **String**
+- **phone:** requerido: **NO**/ tipo: **String**
+- **address:** requerido: **NO**/ tipo: **String**
+- **city:** requerido: **NO**/ tipo: **String**
+- **province:** requerido: **NO**/ tipo: **String**
+- **zipCode:** requerido: **NO**/ tipo: **String**
+- **pets:** requerido: **NO**/ tipo: **Array de Objetos**
+- **role:** requerido: **NO**/ tipo: **String**
+- **banned:** requerido: **NO**/ tipo: **Boolean**
+- **profilePic:** requerido: **NO**/ tipo: **String**
+
+### Mascotas
+- **name:** requerido: **SI**/ tipo: **String**
+- **specie:** requerido: **SI**/ tipo: **String**
+- **breed:** requerido: **NO**/ tipo: **String**
+- **sex:** requerido: **NO**/ tipo: **String**
+- **size:** requerido: **NO**/ tipo: **String**
+- **age:** requerido: **NO**/ tipo: **String**
+- **health:** requerido: **NO**/ tipo: **String**
+- **observations:** requerido: **NO**/ tipo: **String**
+- **owner:** requerido: **SI**/ tipo: **Array de Objetos**
+- **image:** requerido: **NO**/ tipo: **String**
+
+### Turnos
+- **startDate:** requerido: **SI**/ tipo: **Date**
+- **endDate:** requerido: **SI**/ tipo: **Date**
+- **doctor:** requerido: **SI**/ tipo: **Array de Objetos**
+- **pet:** requerido: **SI**/ tipo: **Array de Objetos**
+- **observations:** requerido: **NO**/ tipo: **String**
+- **user:** requerido: **SI**/ tipo: **Array de Objetos**
+
+### Servicios
+- **name:** requerido: **SI**/ tipo: **String**
+- **description:** requerido: **SI**/ tipo: **String**
+- **image:** requerido: **NO**/ tipo: **Array de Objetos**
+
+### Mensajes
+- **type:** requerido: **NO**/ tipo: **String**
+- **contactName:** requerido: **SI**/ tipo: **String**
+- **contactEmail:** requerido: **SI**/ tipo: **String**
+- **contactPhone:** requerido: **NO**/ tipo: **String**
+- **contactMessage:** requerido: **NO**/ tipo: **String**
+- **selectedPlan:** requerido: **NO**/ tipo: **String**
+- **read:** requerido: **SI**/ tipo: **Boolean**
+
+### Veterinarios
+- **name:** requerido: **SI**/ tipo: **String**
+- **workingDays:** requerido: **SI**/ tipo: **String**
+- **startWorkingHour:** requerido: **SI**/ tipo: **String**
+- **endWorkingHour:** requerido: **SI**/ tipo: **String**
+- **description:** requerido: **SI**/ tipo: **String**
+- **appointments:** requerido: **NO**/ tipo: **Array de Objetos**
 
 ## Estructura del Proyecto
 
