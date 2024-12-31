@@ -71,9 +71,7 @@ const getDoctorFreeHoursService = async (doctorID, selectedDate) => {
       6: "Sab",
     }
 
-    console.log((doctorData.workingDays.find((value) => value === dayDict[selectedDate.getDay()])))
-
-    if (doctorData.workingDays.find((value) => value === dayDict[selectedDate.getDay()])) {
+    if (doctorData.workingDays.find((value) => value === dayDict[new Date(selectedDate).getDay()])) {
       for (let hour = startHour; hour < endHour; hour = hour + timeJump) {
         freeHourList.push(hour);
       }
@@ -112,7 +110,6 @@ const getDoctorFreeHoursService = async (doctorID, selectedDate) => {
         statusCode: 200,
       };
     } else {
-
       return {
         data: [],
         statusCode: 200,
