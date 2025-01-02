@@ -88,12 +88,12 @@ const getDoctorFreeHoursService = async (doctorID, selectedDate) => {
           new Date(selectedDate).getDate()
         ) {
           const appointmentStart =
-            new Date(appointment.startDate).getUTCHours() * 60 +
-            new Date(appointment.startDate).getUTCMinutes();
+            new Date(appointment.startDate).getHours() * 60 +
+            new Date(appointment.startDate).getMinutes();
 
           const appointmentEnd =
-            new Date(appointment.endDate).getUTCHours() * 60 +
-            new Date(appointment.endDate).getUTCMinutes();
+            new Date(appointment.endDate).getHours() * 60 +
+            new Date(appointment.endDate).getMinutes();
 
           const tempArray = freeHourList.filter(
             (hour) => !(hour >= appointmentStart && hour < appointmentEnd)
