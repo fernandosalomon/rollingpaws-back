@@ -71,6 +71,8 @@ const getDoctorFreeHoursService = async (doctorID, selectedDate) => {
       6: "Sab",
     }
 
+    const UNIVERSAL_TO_LOCAL_TIME = -180;
+
     if (doctorData.workingDays.find((value) => value === dayDict[new Date(selectedDate).getDay()])) {
       for (let hour = startHour; hour < endHour; hour = hour + timeJump) {
         freeHourList.push(hour);
@@ -88,15 +90,15 @@ const getDoctorFreeHoursService = async (doctorID, selectedDate) => {
           new Date(selectedDate).getDate()
         ) {
           const appointmentStart =
-            new Date(appointment.startDate).getHours() * 60 +
-            new Date(appointment.startDate).getMinutes();
+            new Date(appointment.startDate).getUTCHours() * 60 +
+            new Date(appointment.startDate).getUTCMinutes() + UNIVERSAL_TO_LOCAL_TIME;
 
           const appointmentEnd =
-            new Date(appointment.endDate).getHours() * 60 +
-            new Date(appointment.endDate).getMinutes();
+            new Date(appointment.endDate).getUTCHours() * 60 +
+            new Date(appointment.endDate).getUTCMinutes() + UNIVERSAL_TO_LOCAL_TIME;
 
-          const currentHour = new Date().getHours() * 60 +
-            new Date().getMinutes();
+          const currentHour = new Date().getUTCHours() * 60 +
+            new Date().getUTCMinutes() + UNIVERSAL_TO_LOCAL_TIME;
 
           const tempArray = freeHourList.filter(
             (hour) => !(hour <= currentHour && hour >= appointmentStart && hour < appointmentEnd)
