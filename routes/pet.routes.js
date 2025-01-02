@@ -18,8 +18,8 @@ router.get("/:petID", auth("admin"), getPetByIdController);
 router.get("/", auth("admin"), getAllPetsController);
 
 router.post("/", auth("user"), createNewPetController);
-router.post("/image/:petID", auth("user"), multer.single("image"), updatePetPicController)
 
+router.put("/image/:petID", auth("user"), multer.single("image"), updatePetPicController)
 router.put("/:petID", auth("user"), updatePetController);
 
 router.delete("/:petID", auth("user"), deletePetByIdController);
