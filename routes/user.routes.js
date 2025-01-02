@@ -26,8 +26,8 @@ router.get("/", auth("admin"), getAllUsersController);
 router.post("/", loginUserController);
 
 router.post("/register", createNewUserController);
-router.post("/profile-pic/:userID", auth("user"), multer.single("profilePic"), updateUserPicController)
 
+router.put("/profile-pic/:userID", auth("user"), multer.single("profilePic"), updateUserPicController)
 router.put("/change-password-token", changePasswordWithTokenController)
 router.put("/change-password", auth("user"), changePasswordController)
 router.put("/forgot-password", forgotPasswordController)
