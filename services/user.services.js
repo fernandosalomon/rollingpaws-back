@@ -83,8 +83,8 @@ const createNewUserService = async (body) => {
           const userFullName = registeredUser.firstName + " " + registeredUser.lastName;
           welcomeTemplateMail(userFullName, registeredUser.email);
           return {
-            data: registeredUser,
             token: token,
+            role: registeredUser.role,
             statusCode: 201,
           };
         } catch (error) {
