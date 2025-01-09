@@ -19,18 +19,6 @@ const appointmentsSchema = new Schema(
       required: true,
       match: [/^([01]\d|2[0-3]):([0-5]\d)$/, "La hora debe corresponder con el formato HH:mm, donde HH es un número entre 0 y 23 y mm un número entre 0 y 59"],
     },
-    endDate: {
-      type: Date,
-      required: true,
-      validate: {
-        validator: function (value) {
-          const today = new Date();
-          const dateToValidate = new Date(value);
-          return (dateToValidate.getUTCDate() >= today.getUTCDate() && dateToValidate.getUTCMonth() >= today.getUTCMonth() && dateToValidate.getUTCFullYear() >= today.getUTCFullYear());
-        },
-        message: "La fecha de la cita no puede ser anterior a la fecha actual.",
-      },
-    },
     endTime: {
       type: String,
       required: true,

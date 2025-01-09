@@ -62,27 +62,16 @@ const getUserAppointmentsService = async (userID) => {
 }
 
 const createAppointmentService = async (body, userID) => {
-  const { startDate, startTime, endDate, endTime, doctor, pet, observations } = body;
+  const { startDate, startTime, endTime, doctor, pet, observations } = body;
 
-  if (!startDate || !startTime || !endDate || !endTime || !doctor || !pet) {
+  if (!startDate || !startTime || !endTime || !doctor || !pet) {
     return {
       message: "Faltan completar campos obligatorios",
       statusCode: 400,
     };
   }
 
-  if (new Date(startDate) > new Date(endDate)) {
-    return {
-      message: "La fecha de inicio no puede ser posterior a la de finalización",
-      statusCode: 400,
-    };
-  }
-
-  if (
-    new Date(startDate).getDate() === new Date(endDate).getDate() &&
-    new Date(startDate).getMonth() === new Date(endDate).getMonth() &&
-    new Date(startDate).getFullYear() === new Date(endDate).getFullYear() &&
-    Number(startTime.split(":")[0]) > Number(endTime.split(":")[0])) {
+  if (Number(startTime.split(":")[0]) > Number(endTime.split(":")[0])) {
     return {
       message: "La hora de inicio no puede ser posterior a la de finalización",
       statusCode: 400,
@@ -113,7 +102,6 @@ const createAppointmentService = async (body, userID) => {
   const appointment = new AppointmentsModel({
     startDate,
     startTime,
-    endDate,
     endTime,
     doctor,
     pet,
@@ -154,7 +142,6 @@ const updateAppointmentService = async (appointmentID, body) => {
 
     const startDate = body.startDate ? body.startDate : appointmentExists.startDate;
     const startTime = body.startTime ? body.startTime : appointmentExists.startTime;
-    const endDate = body.endDate ? body.endDate : appointmentExists.endDate;
     const endTime = body.endTime ? body.endTime : appointmentExists.endTime;
     const today = new Date();
 
@@ -215,32 +202,20 @@ const updateAppointmentService = async (appointmentID, body) => {
       }
     }
 
-    if (new Date(startDate) > new Date(endDate)) {
+    if (Number(startTime.split(":")[0]) > Number(endTime.split(":")[0])) {
       return {
-        message: "La fecha de inicio no puede ser posterior a la de finalización",
+        message: "La hora de inicio no puede ser posterior a la de finalización",
         statusCode: 400,
       };
-    }
-
-    if (
-      new Date(startDate).getUTCDate() === new Date(endDate).getUTCDate() &&
-      new Date(startDate).getUTCMonth() === new Date(endDate).getUTCMonth() &&
-      new Date(startDate).getUTCFullYear() === new Date(endDate).getUTCFullYear()
-    ) {
-      if (Number(startTime.split(":")[0]) > Number(endTime.split(":")[0])) {
+    } else if (Number(startTime.split(":")[0]) === Number(endTime.split(":")[0])) {
+      if (Number(startTime.split(":")[1]) >= Number(endTime.split(":")[1])) {
         return {
-          message: "La hora de inicio no puede ser posterior a la de finalización",
+          message: "La hora de inicio no puede ser posterior o igual a la de finalización",
           statusCode: 400,
         };
-      } else if (Number(startTime.split(":")[0]) === Number(endTime.split(":")[0])) {
-        if (Number(startTime.split(":")[1]) >= Number(endTime.split(":")[1])) {
-          return {
-            message: "La hora de inicio no puede ser posterior o igual a la de finalización",
-            statusCode: 400,
-          };
-        }
       }
     }
+
 
     const updatedAppointment = await AppointmentsModel.findByIdAndUpdate(
       appointmentID,
