@@ -107,6 +107,7 @@ const getDoctorFreeHoursService = async (doctorID, date, month, year) => {
       statusCode: 200,
       data: availableSlots,
     }
+    
   } catch (error) {
     console.log(error);
     return {
