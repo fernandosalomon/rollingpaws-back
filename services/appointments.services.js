@@ -187,7 +187,7 @@ const updateAppointmentService = async (appointmentID, body) => {
         message: "La hora de inicio no puede ser anterior a la actual",
         statusCode: 400,
       };
-    } else if (Number(startTime.split(":")[0]) === today.getHours()) {
+    } else if (Number(startTime.split(":")[0]) === (today.getUTCHours() - 3)) {
       if (Number(startTime.split(":")[1]) < today.getMinutes()) {
         return {
           message: "La hora de inicio no puede ser anterior a la actual",
@@ -206,7 +206,7 @@ const updateAppointmentService = async (appointmentID, body) => {
         message: "La hora de inicio no puede ser anterior a la actual",
         statusCode: 400,
       };
-    } else if (Number(endTime.split(":")[0]) === today.getHours()) {
+    } else if (Number(endTime.split(":")[0]) === (today.getUTCHours() - 3)) {
       if (Number(endTime.split(":")[1]) < today.getMinutes()) {
         return {
           message: "La hora de inicio no puede ser anterior a la actual",
