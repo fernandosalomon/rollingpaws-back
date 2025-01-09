@@ -14,7 +14,7 @@ const router = Router();
 router.get("/", auth("user"), getAllDoctorsController);
 router.get("/:doctorID", auth("user"), getDoctorByIdController);
 router.get(
-  "/clinic-hours/:doctorID&:selectedDate", auth("user"),
+  "/clinic-hours/:doctorID&:date&:month&:year", auth("user"),
   getDoctorFreeHoursController
 );
 

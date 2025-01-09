@@ -9,10 +9,15 @@ const appointmentsSchema = new Schema(
         validator: function (value) {
           const today = new Date();
           const dateToValidate = new Date(value);
-          return today < dateToValidate;
+          return (dateToValidate.getUTCDate() >= today.getUTCDate() && dateToValidate.getUTCMonth() >= today.getUTCMonth() && dateToValidate.getUTCFullYear() >= today.getUTCFullYear());
         },
         message: "La fecha de la cita no puede ser anterior a la fecha actual.",
       },
+    },
+    startTime: {
+      type: String,
+      required: true,
+      match: [/^([01]\d|2[0-3]):([0-5]\d)$/, "La hora debe corresponder con el formato HH:mm, donde HH es un número entre 0 y 23 y mm un número entre 0 y 59"],
     },
     endDate: {
       type: Date,
@@ -21,10 +26,15 @@ const appointmentsSchema = new Schema(
         validator: function (value) {
           const today = new Date();
           const dateToValidate = new Date(value);
-          return today < dateToValidate;
+          return (dateToValidate.getUTCDate() >= today.getUTCDate() && dateToValidate.getUTCMonth() >= today.getUTCMonth() && dateToValidate.getUTCFullYear() >= today.getUTCFullYear());
         },
         message: "La fecha de la cita no puede ser anterior a la fecha actual.",
       },
+    },
+    endTime: {
+      type: String,
+      required: true,
+      match: [/^([01]\d|2[0-3]):([0-5]\d)$/, "La hora debe corresponder con el formato HH:mm, donde HH es un número entre 0 y 23 y mm un número entre 0 y 59"],
     },
     doctor: {
       type: Schema.Types.ObjectId,

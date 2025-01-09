@@ -42,13 +42,15 @@ const getDoctorByIdService = async (doctorID) => {
   }
 };
 
-const getDoctorFreeHoursService = async (doctorID, selectedDate) => {
-  let freeHourList = [];
+const getDoctorFreeHoursService = async (doctorID, date, month, year) => {
+
+  let availableSlots = [];
   const timeJump = 30;
+
   const parseTime = (value) => {
     const hour = Math.floor(Number(value) / 60);
     const minutes = Number(value) - hour * 60;
-    return `${hour < 10 ? "0" : ""}${hour}:${minutes < 10 ? "0" : ""
+    return `${hour < 10 ? "0" : ""}${hour}: ${minutes < 10 ? "0" : ""
       }${minutes}`;
   };
 
@@ -71,66 +73,36 @@ const getDoctorFreeHoursService = async (doctorID, selectedDate) => {
       6: "Sab",
     }
 
-    const UNIVERSAL_TO_LOCAL_TIME = -180;
-
-    if (doctorData.workingDays.find((value) => value === dayDict[new Date(selectedDate).getDay()])) {
+    if (doctorData.workingDays.find((value) => value === dayDict[new Date(`${year}-${month}-${date}`).getUTCDay()])) {
       for (let hour = startHour; hour < endHour; hour = hour + timeJump) {
-        freeHourList.push(hour);
-      }
-
-      const vetAppointments = await AppointmentsModel.find({ doctor: doctorID });
-
-      vetAppointments.map((appointment) => {
-        if (
-          new Date(appointment.startDate).getFullYear() ===
-          new Date(selectedDate).getFullYear() &&
-          new Date(appointment.startDate).getMonth() ===
-          new Date(selectedDate).getMonth() &&
-          new Date(appointment.startDate).getDate() ===
-          new Date(selectedDate).getDate()
-        ) {
-          const appointmentStart =
-            new Date(appointment.startDate).getUTCHours() * 60 +
-            new Date(appointment.startDate).getUTCMinutes() + UNIVERSAL_TO_LOCAL_TIME;
-
-          const appointmentEnd =
-            new Date(appointment.endDate).getUTCHours() * 60 +
-            new Date(appointment.endDate).getUTCMinutes() + UNIVERSAL_TO_LOCAL_TIME;
-
-          const currentHour = new Date().getUTCHours() * 60 +
-            new Date().getUTCMinutes() + UNIVERSAL_TO_LOCAL_TIME;
-
-          const tempArray = freeHourList.filter(
-            (hour) => !(hour <= currentHour && hour >= appointmentStart && hour < appointmentEnd)
-          );
-
-          freeHourList = [...tempArray];
-        }
-      });
-
-      freeHourList = freeHourList.map((hour) => parseTime(hour));
-
-      return {
-        data: freeHourList,
-        statusCode: 200,
-      };
-    } else {
-      return {
-        data: [],
-        statusCode: 200,
+        availableSlots.push(hour);
       }
     }
 
+    const bookedAppointments = await AppointmentsModel.find({ startDate: new Date(`${year}-${month}-${date}`), doctor: doctorID });
 
+    bookedAppointments.map((appointment) => {
+      const numberOfSlotsToRemove = (Number(appointment.endTime.split(":")[0]) - Number(appointment.startTime.split(":")[0])) * 2 + (Number(appointment.endTime.split(":")[1]) - Number(appointment.startTime.split(":")[1])) / 30
+
+      const index = availableSlots.findIndex((value) => value === (Number(appointment.startTime.split(":")[0]) * 60 + Number(appointment.startTime.split(":")[1])));
+
+      availableSlots.splice(index, numberOfSlotsToRemove);
+    })
+
+    availableSlots = availableSlots.map((slot) => parseTime(slot));
+
+    return {
+      statusCode: 200,
+      data: availableSlots,
+    }
   } catch (error) {
     console.log(error);
     return {
-      message:
-        "Hubo un error tratando de recuperar los datos de la base de datos.",
       statusCode: 500,
-    };
+      message: "Hubo un error tratando de recuperar los datos de la base de datos.",
+    }
   }
-};
+}
 
 const createDoctorService = async (body) => {
   const { user, workingDays, startWorkingHour, endWorkingHour, description } =

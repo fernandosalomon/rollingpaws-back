@@ -62,44 +62,87 @@ const getUserAppointmentsService = async (userID) => {
 }
 
 const createAppointmentService = async (body, userID) => {
-  const { startDate, endDate, doctor, pet, observations } = body;
+  const { startDate, startTime, endDate, endTime, doctor, pet, observations } = body;
 
-  if (!startDate || !startDate || !doctor || !pet) {
+  if (!startDate || !startTime || !endDate || !endTime || !doctor || !pet) {
     return {
       message: "Faltan completar campos obligatorios",
       statusCode: 400,
     };
-  } else {
-    const appointment = new AppointmentsModel({
-      startDate,
-      endDate,
-      doctor,
-      pet,
-      observations,
-      user: userID,
-    });
-    try {
-      const createdAppointment = await appointment.save();
-      const doctorData = await getDoctorByIdService(doctor);
-      const newAppointmentList = doctorData.data.appointments;
-      newAppointmentList.push(appointment);
-      updateDoctorService(doctor, { appointment: newAppointmentList });
-      return {
-        data: createdAppointment,
-        statusCode: 201,
-      };
-    } catch (error) {
-      console.log(error);
-      return {
-        message:
-          "Hubo un error al tratar de crear la cita en la base de datos.",
-        statusCode: 500,
-      };
-    }
   }
-};
+
+  if (new Date(startDate) > new Date(endDate)) {
+    return {
+      message: "La fecha de inicio no puede ser posterior a la de finalización",
+      statusCode: 400,
+    };
+  }
+
+  if (
+    new Date(startDate).getDate() === new Date(endDate).getDate() &&
+    new Date(startDate).getMonth() === new Date(endDate).getMonth() &&
+    new Date(startDate).getFullYear() === new Date(endDate).getFullYear() &&
+    Number(startTime.split(":")[0]) > Number(endTime.split(":")[0])) {
+    return {
+      message: "La hora de inicio no puede ser posterior a la de finalización",
+      statusCode: 400,
+    };
+  }
+
+  if (Number(startTime.split(":")[0]) === Number(endTime.split(":")[0]) && Number(startTime.split(":")[1]) > Number(endTime.split(":")[1])) {
+    return {
+      message: "La hora de inicio no puede ser posterior a la de finalización",
+      statusCode: 400,
+    };
+  }
+
+  const today = new Date();
+
+  if (
+    new Date(startDate).getUTCDate() === today.getUTCDate() &&
+    new Date(startDate).getUTCMonth() === today.getUTCMonth() &&
+    new Date(startDate).getUTCFullYear() === today.getUTCFullYear() &&
+    Number(startTime.split(":")[0]) <= today.getHours()
+  ) {
+    console.log(Number(startTime.split(":")[0]), today.getUTCHours())
+    return {
+      message: "Los turnos solo pueden reservarse con una hora de anticipación.",
+      statusCode: 400,
+    };
+  }
+
+  const appointment = new AppointmentsModel({
+    startDate,
+    startTime,
+    endDate,
+    endTime,
+    doctor,
+    pet,
+    observations,
+    user: userID,
+  });
+  try {
+    const createdAppointment = await appointment.save();
+    const doctorData = await getDoctorByIdService(doctor);
+    const newAppointmentList = doctorData.data.appointments;
+    newAppointmentList.push(appointment);
+    updateDoctorService(doctor, { appointments: newAppointmentList });
+    return {
+      data: createdAppointment,
+      statusCode: 201,
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      message:
+        "Hubo un error al tratar de crear la cita en la base de datos.",
+      statusCode: 500,
+    };
+  }
+}
 
 const updateAppointmentService = async (appointmentID, body) => {
+
   try {
     const appointmentExists = await AppointmentsModel.findById(appointmentID);
 
@@ -108,16 +151,107 @@ const updateAppointmentService = async (appointmentID, body) => {
         message: "El ID no corresponde con ninguna cita.",
         statusCode: 400,
       };
-    } else {
-      const updatedAppointment = await AppointmentsModel.findByIdAndUpdate(
-        appointmentID,
-        body,
-        {
-          new: true,
-        }
-      );
-      return { data: updatedAppointment, statusCode: 200 };
     }
+
+    const startDate = body.startDate ? body.startDate : appointmentExists.startDate;
+    const startTime = body.startTime ? body.startTime : appointmentExists.startTime;
+    const endDate = body.endDate ? body.endDate : appointmentExists.endDate;
+    const endTime = body.endTime ? body.endTime : appointmentExists.endTime;
+    const today = new Date();
+
+    if (new Date(startDate).getUTCFullYear() < today.getFullYear()) {
+      return {
+        message: "La fecha de inicio no puede ser anterior a la fecha actual",
+        statusCode: 400,
+      };
+    } else if (new Date(startDate).getUTCFullYear() === today.getFullYear()) {
+      if (new Date(startDate).getUTCMonth() < today.getMonth()) {
+        return {
+          message: "La fecha de inicio no puede ser anterior a la fecha actual",
+          statusCode: 400,
+        };
+      } else if (new Date(startDate).getUTCDate() < today.getDate()) {
+        return {
+          message: "La fecha de inicio no puede ser anterior a la fecha actual",
+          statusCode: 400,
+        };
+      }
+    }
+
+    if (
+      new Date(startDate).getUTCDate() === today.getDate() &&
+      new Date(startDate).getUTCMonth() === today.getMonth() &&
+      new Date(startDate).getUTCFullYear() === today.getFullYear() &&
+      Number(startTime.split(":")[0]) <= today.getHours()
+    ) {
+      return {
+        message: "La hora de inicio no puede ser anterior a la actual",
+        statusCode: 400,
+      };
+    } else if (Number(startTime.split(":")[0]) === today.getHours()) {
+      if (Number(startTime.split(":")[1]) < today.getMinutes()) {
+        return {
+          message: "La hora de inicio no puede ser anterior a la actual",
+          statusCode: 400,
+        };
+      }
+    }
+
+    if (
+      new Date(startDate).getDate() === today.getDate() &&
+      new Date(startDate).getMonth() === today.getMonth() &&
+      new Date(startDate).getFullYear() === today.getFullYear() &&
+      Number(endTime.split(":")[0]) <= today.getHours()
+    ) {
+      return {
+        message: "La hora de inicio no puede ser anterior a la actual",
+        statusCode: 400,
+      };
+    } else if (Number(endTime.split(":")[0]) === today.getHours()) {
+      if (Number(endTime.split(":")[1]) < today.getMinutes()) {
+        return {
+          message: "La hora de inicio no puede ser anterior a la actual",
+          statusCode: 400,
+        };
+      }
+    }
+
+    if (new Date(startDate) > new Date(endDate)) {
+      return {
+        message: "La fecha de inicio no puede ser posterior a la de finalización",
+        statusCode: 400,
+      };
+    }
+
+    if (
+      new Date(startDate).getUTCDate() === new Date(endDate).getUTCDate() &&
+      new Date(startDate).getUTCMonth() === new Date(endDate).getUTCMonth() &&
+      new Date(startDate).getUTCFullYear() === new Date(endDate).getUTCFullYear()
+    ) {
+      if (Number(startTime.split(":")[0]) > Number(endTime.split(":")[0])) {
+        return {
+          message: "La hora de inicio no puede ser posterior a la de finalización",
+          statusCode: 400,
+        };
+      } else if (Number(startTime.split(":")[0]) === Number(endTime.split(":")[0])) {
+        if (Number(startTime.split(":")[1]) >= Number(endTime.split(":")[1])) {
+          return {
+            message: "La hora de inicio no puede ser posterior o igual a la de finalización",
+            statusCode: 400,
+          };
+        }
+      }
+    }
+
+    const updatedAppointment = await AppointmentsModel.findByIdAndUpdate(
+      appointmentID,
+      body,
+      {
+        new: true,
+      }
+    );
+    return { data: updatedAppointment, statusCode: 200 };
+
   } catch (error) {
     console.log(error);
     return {
