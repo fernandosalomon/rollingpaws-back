@@ -49,19 +49,16 @@ const userSchema = new Schema(
     city: {
       type: String,
       match: [/^[a-zA-ZáéíóúÁÉÍÓÚñÑ'\s]+$/, "Formato de ciudad incorrecto"],
-      minLength: 2,
       maxLength: 40,
     },
     province: {
       type: String,
       match: [/^[a-zA-ZáéíóúÁÉÍÓÚñÑ'\s]+$/, "Formato de provincia incorrecto"],
-      minLength: 2,
       maxLength: 40,
     },
     zipCode: {
       type: String,
       match: [/^\d{4}$/, "Formato de código postal incorrecto"],
-      minLength: 2,
       maxLength: 40,
     },
     pets: [
