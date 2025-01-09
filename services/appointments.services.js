@@ -181,7 +181,7 @@ const updateAppointmentService = async (appointmentID, body) => {
       new Date(startDate).getUTCDate() === today.getDate() &&
       new Date(startDate).getUTCMonth() === today.getMonth() &&
       new Date(startDate).getUTCFullYear() === today.getFullYear() &&
-      Number(startTime.split(":")[0]) <= today.getHours()
+      Number(startTime.split(":")[0]) <= (today.getUTCHours() - 3)
     ) {
       return {
         message: "La hora de inicio no puede ser anterior a la actual",
@@ -200,7 +200,7 @@ const updateAppointmentService = async (appointmentID, body) => {
       new Date(startDate).getDate() === today.getDate() &&
       new Date(startDate).getMonth() === today.getMonth() &&
       new Date(startDate).getFullYear() === today.getFullYear() &&
-      Number(endTime.split(":")[0]) <= today.getHours()
+      Number(endTime.split(":")[0]) <= (today.getUTCHours() - 3)
     ) {
       return {
         message: "La hora de inicio no puede ser anterior a la actual",
