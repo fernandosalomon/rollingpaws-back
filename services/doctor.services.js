@@ -96,8 +96,8 @@ const getDoctorFreeHoursService = async (doctorID, date, month, year) => {
       Number(month) === today.getMonth() + 1 &&
       Number(year) === today.getFullYear()
     ) {
-      const actualTime = (today.getUTCHours() - 3) * 60 + today.getMinutes();
-      const filteredSlots = availableSlots.filter((time) => time >= actualTime + 30);
+      const actualTime = (today.getUTCHours() - 3) * 60 + today.getMinutes() + 30;
+      const filteredSlots = availableSlots.filter((time) => time >= actualTime);
       availableSlots = [...filteredSlots];
     }
 
