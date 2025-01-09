@@ -50,7 +50,7 @@ const getDoctorFreeHoursService = async (doctorID, date, month, year) => {
   const parseTime = (value) => {
     const hour = Math.floor(Number(value) / 60);
     const minutes = Number(value) - hour * 60;
-    return `${hour < 10 ? "0" : ""}${hour}: ${minutes < 10 ? "0" : ""
+    return `${hour < 10 ? "0" : ""}${hour}:${minutes < 10 ? "0" : ""
       }${minutes}`;
   };
 
