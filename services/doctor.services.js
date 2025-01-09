@@ -79,7 +79,7 @@ const getDoctorFreeHoursService = async (doctorID, date, month, year) => {
       }
     }
 
-    const bookedAppointments = await AppointmentsModel.find({ startDate: new Date(`${year}-${month}-${date}`), doctor: doctorID });
+    const bookedAppointments = await AppointmentsModel.find({ startDate: new Date(`${year}-${Number(month) < 10 ? "0" : ""}${Number(month)}-${Number(date) < 10 ? "0" : ""}${date}T00:00:00+00:00`), doctor: doctorID });
 
     bookedAppointments.map((appointment) => {
       const numberOfSlotsToRemove = (Number(appointment.endTime.split(":")[0]) - Number(appointment.startTime.split(":")[0])) * 2 + (Number(appointment.endTime.split(":")[1]) - Number(appointment.startTime.split(":")[1])) / 30
