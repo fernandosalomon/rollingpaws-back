@@ -44,7 +44,6 @@ const userSchema = new Schema(
         /^[a-zA-ZáéíóúÁÉÍÓÚñÑ'0-9\s]+$/,
         "Formato de dirección incorrecto",
       ],
-      minLength: 2,
       maxLength: 40,
     },
     city: {
