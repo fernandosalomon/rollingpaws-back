@@ -102,9 +102,8 @@ const createAppointmentService = async (body, userID) => {
     new Date(startDate).getUTCDate() === today.getUTCDate() &&
     new Date(startDate).getUTCMonth() === today.getUTCMonth() &&
     new Date(startDate).getUTCFullYear() === today.getUTCFullYear() &&
-    Number(startTime.split(":")[0]) <= today.getHours()
+    Number(startTime.split(":")[0]) <= (today.getUTCHours() - 3)
   ) {
-    console.log(Number(startTime.split(":")[0]), today.getUTCHours())
     return {
       message: "Los turnos solo pueden reservarse con una hora de anticipación.",
       statusCode: 400,
