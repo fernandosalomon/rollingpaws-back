@@ -89,6 +89,18 @@ const getDoctorFreeHoursService = async (doctorID, date, month, year) => {
       availableSlots.splice(index, numberOfSlotsToRemove);
     })
 
+    const today = new Date();
+
+    if (
+      Number(date) === today.getDate() &&
+      Number(month) === today.getMonth() + 1 &&
+      Number(year) === today.getFullYear()
+    ) {
+      const actualTime = today.getHours() * 60 + today.getMinutes();
+      const filteredSlots = availableSlots.filter((time) => time >= actualTime);
+      availableSlots = [...filteredSlots];
+    }
+
     availableSlots = availableSlots.map((slot) => parseTime(slot));
 
     return {
